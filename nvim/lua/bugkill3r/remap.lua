@@ -25,4 +25,5 @@ nnoremap("<leader>vh", function()
     require('telescope.builtin').help_tags()
 end)
 
-
+--nvim-tree
+nnoremap("<leader>e", "<cmd>NvimTreeToggle<CR>")
