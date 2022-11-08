@@ -1,4 +1,8 @@
-vim.g.bugkill3r_colorscheme = "tokyonight"
+vim.g.bugkill3r_colorscheme = "rose-pine"
+
+require("catppuccin").setup({
+	transparent_background = false,
+});
 
 function ColorMyPencils()
     vim.g.gruvbox_contrast_dark = 'hard'
