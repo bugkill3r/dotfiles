@@ -1,6 +1,10 @@
 require("bugkill3r.set")
-require("bugkill3r.remap")
 require("bugkill3r.packer")
+require("bugkill3r.debugger")
+
+-- lsp
+require("bugkill3r.cmp")
+require("bugkill3r.lsp")
 
 local augroup = vim.api.nvim_create_augroup
 bugkill3rGroup = augroup('bugkill3r', {})
@@ -37,6 +41,6 @@ autocmd({"BufWritePre"}, {
     command = "%s/\\s\\+$//e",
 })
 
--- vim.g.netrw_browse_split = 0
--- vim.g.netrw_banner = 0
--- vim.g.netrw_winsize = 25
+vim.g.netrw_browse_split = 0
+vim.g.netrw_banner = 0
+vim.g.netrw_winsize = 25
