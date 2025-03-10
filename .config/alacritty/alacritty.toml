@@ -156,27 +156,54 @@ action = "ToggleFullscreen"
 key = "F"
 mods = "Command|Control"
 
+[[keyboard.bindings]]
+action = "ScrollPageUp"
+key = "PageUp"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ScrollPageDown"
+key = "PageDown"
+mods = "Shift"
+
+[[keyboard.bindings]]
+action = "ClearHistory"
+key = "K"
+mods = "Command|Control"
+
+[[keyboard.bindings]]
+action = "SpawnNewInstance"
+key = "N"
+mods = "Command|Control"
+
 [general]
-import = ["/Users/saurabh/.config/alacritty/./themes/cyberpunk.toml"]
+import = ["~/.config/alacritty/themes/cyberpunk.toml"]
+
+# Live config reload
+live_config_reload = true
 
 [bell]
 animation = "EaseOutExpo"
-color = "#ffffff"
+color = "#505050"
 duration = 200
+
+# Visual bell settings
+visual_bell = { animation = "EaseOutExpo", duration = 150, color = "#3074b0" }
 
 [cursor]
 blink_interval = 550
 blink_timeout = 0
 thickness = 0.15
 unfocused_hollow = true
-vi_mode_style = "None"
+vi_mode_style = "Underline"
 
 [cursor.style]
 blinking = "Always"
-shape = "Block"
+shape = "Beam"
 
 [font]
 size = 13.5
+builtin_box_drawing = true
 
 [font.bold]
 family = "CaskaydiaCove Nerd Font"
@@ -202,6 +229,21 @@ style = "Regular"
 x = 0
 y = 0
 
+# Better performance and rendering
+[advanced]
+renderer = "gpu"
+use_thin_strokes = true
+
+# Optimize rendering speed
+[debug]
+persistent_logging = false
+render_timer = false
+log_level = "Warn"
+
+# Performance optimizations
+[env]
+TERM = "xterm-256color"
+
 [[hints.enabled]]
 command = "open"
 hyperlinks = true
@@ -219,6 +261,14 @@ mods = "None"
 [scrolling]
 history = 10000
 multiplier = 3
+faux_multiplier = 100
+auto_scroll = true
+
+[mouse]
+hide_when_typing = true
+bindings = [
+  { mouse = "Middle", action = "PasteSelection" }
+]
 
 [selection]
 save_to_clipboard = true
@@ -227,7 +277,9 @@ semantic_escape_chars = ''',│`|:"' ()[]{}<>	'''
 [window]
 decorations = "buttonless"
 dynamic_title = true
-opacity = 0.9
+opacity = 0.95
+startup_mode = "Maximized"
+title = "Alacritty Terminal"
 
 [window.dimensions]
 columns = 140
@@ -236,6 +288,10 @@ lines = 38
 [window.padding]
 x = 12
 y = 12
+
+[window.class]
+general = "Alacritty"
+instance = "Alacritty"
 
 [colors]
 draw_bold_text_with_bright_colors = true
