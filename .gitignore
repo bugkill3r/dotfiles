@@ -1,1 +1,10 @@
+# Ignore nested git repositories and build artifacts
+**/.git/
+**/.DS_Store
+.config/nvim/plugin/packer_compiled.lua
+.config/nvim/java-debug/
+.config/nvim/vscode-java-test/
 .config/tmux/plugins/
+**/node_modules/
+**/target/
+**/.gradle/
