@@ -1,0 +1,62 @@
+# Cyberpunk Neon Theme for Alacritty
+# A vibrant, high-contrast cyberpunk theme with neon colors
+
+colors:
+  primary:
+    background: '#0a0a16'
+    foreground: '#f0f0f0'
+    bright_foreground: '#ffffff'
+  
+  cursor:
+    text: '#0a0a16'
+    cursor: '#00ff9f'
+  
+  vi_mode_cursor:
+    text: '#0a0a16'
+    cursor: '#fc00ff'
+  
+  selection:
+    text: '#0a0a16'
+    background: '#fc28a8'
+  
+  search:
+    matches:
+      foreground: '#0a0a16'
+      background: '#00ff9f'
+    focused_match:
+      foreground: '#0a0a16'
+      background: '#fc00ff'
+  
+  hints:
+    start:
+      foreground: '#0a0a16'
+      background: '#00ff9f'
+    end:
+      foreground: '#00ff9f'
+      background: '#0a0a16'
+  
+  line_indicator:
+    foreground: None
+    background: None
+  
+  # Normal colors
+  normal:
+    black:   '#151528'
+    red:     '#ff2e6d'
+    green:   '#00ff9f'
+    yellow:  '#fcee54'
+    blue:    '#00bfff'
+    magenta: '#fb33db'
+    cyan:    '#00faff'
+    white:   '#f0f0f0'
+  
+  # Bright colors
+  bright:
+    black:   '#29293f'
+    red:     '#ff5286'
+    green:   '#72ffd0'
+    yellow:  '#fef26c'
+    blue:    '#67d3ff'
+    magenta: '#fc75ea'
+    cyan:    '#5df8ff'
+    white:   '#ffffff'
