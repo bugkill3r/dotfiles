@@ -1,3 +1,7 @@
+import:
+  #- ./themes/nord.yml
+  - ./themes/rigel.yml
+  # - ./themes/rose-pine.yml
 window:
   dimensions:
     columns: 140
@@ -6,9 +10,10 @@ window:
     x: 10
     y: 10
 
-  decorations: none 
+  decorations: none
 
   opacity: 0.97
+  # opacity: 1.0
 
   # Startup Mode (changes require restart)
   #
@@ -29,10 +34,10 @@ window:
 
   # Window class (Linux/BSD only):
   #class:
-    # Application instance name
-    #instance: Alacritty
-    # General application class
-    #general: Alacritty
+# Application instance name
+#instance: Alacritty
+# General application class
+#general: Alacritty
 
   # Decorations theme variant (Linux/BSD only)
   #
@@ -53,48 +58,47 @@ scrolling:
 font:
   # Normal (roman) font face
   normal:
-    # Font family
-    #
-    # Default:
-    #   - (macOS) Menlo
-    #   - (Linux/BSD) CaskaydiaCove Nerd Font
-    #   - (Windows) Consolas
-    family: CaskaydiaCove Nerd Font 
-
-    # The `style` can be specified to pick a specific face.
-    #style: Regular
+# Font family
+#
+# Default:
+#   - (macOS) Menlo
+#   - (Linux/BSD) CaskaydiaCove Nerd Font
+#   - (Windows) Consolas
+    family: CaskaydiaCove Nerd Font
+# The `style` can be specified to pick a specific face.
+    style: Regular
 
   # Bold font face
   bold:
-    # Font family
-    #
-    # If the bold family is not specified, it will fall back to the
-    # value specified for the normal font.
+# Font family
+#
+# If the bold family is not specified, it will fall back to the
+# value specified for the normal font.
     family: CaskaydiaCove Nerd Font
 
-    # The `style` can be specified to pick a specific face.
-    #style: Bold
+# The `style` can be specified to pick a specific face.
+    style: Bold
 
   # Italic font face
   italic:
-    # Font family
-    #
-    # If the italic family is not specified, it will fall back to the
-    # value specified for the normal font.
+# Font family
+#
+# If the italic family is not specified, it will fall back to the
+# value specified for the normal font.
     family: CaskaydiaCove Nerd Font
 
-    # The `style` can be specified to pick a specific face.
+# The `style` can be specified to pick a specific face.
     style: Italic
 
   # Bold italic font face
   bold_italic:
-    # Font family
-    #
-    # If the bold italic family is not specified, it will fall back to the
-    # value specified for the normal font.
+# Font family
+#
+# If the bold italic family is not specified, it will fall back to the
+# value specified for the normal font.
     family: CaskaydiaCove Nerd Font
 
-    # The `style` can be specified to pick a specific face.
+# The `style` can be specified to pick a specific face.
     style: Bold Italic
 
   # Point size
@@ -126,92 +130,92 @@ font:
 
 
 # Colors (Gruvbox dark)
-colors:
-  primary:
-    # hard contrast background - '#1d2021'
-    background:        &gruvbox_dark_bg '#282828'
-    # soft contrast background - '#32302f'
-    foreground:        '#ebdbb2'
-    bright_foreground: '#fbf1c7'
-    dim_foreground:    '#a89984'
-  cursor:
-    text:   CellBackground
-    cursor: CellForeground
-  vi_mode_cursor:
-    text:   CellBackground
-    cursor: CellForeground
-  # search:
-  #   matches:
-  #     foreground: '#000000'
-  #     background: '#ffffff'
-  #   focused_match:
-  #    foreground: CellBackground
-  #    background: CellForeground
-  #   bar:
-  #     background: ''
-  #     foreground: ''
-  # line_indicator:
-  #   foreground: None
-  #   background: None
-  selection:
-    text:       CellBackground
-    background: CellForeground
-  bright:
-    black:   '#928374'
-    red:     '#fb4934'
-    green:   '#b8bb26'
-    yellow:  '#fabd2f'
-    blue:    '#83a598'
-    magenta: '#d3869b'
-    cyan:    '#8ec07c'
-    white:   '#ebdbb2'
-  normal:
-    black:   *gruvbox_dark_bg
-    red:     '#cc241d'
-    green:   '#98971a'
-    yellow:  '#d79921'
-    blue:    '#458588'
-    magenta: '#b16286'
-    cyan:    '#689d6a'
-    white:   '#a89984'
-  dim:
-    black:   '#32302f'
-    red:     '#9d0006'
-    green:   '#79740e'
-    yellow:  '#b57614'
-    blue:    '#076678'
-    magenta: '#8f3f71'
-    cyan:    '#427b58'
-    white:   '#928374'
-  indexed_colors:
-    - { index:  66, color: '#458588' }
-    - { index:  72, color: '#689d6a' }
-    - { index: 106, color: '#98971a' }
-    - { index: 108, color: '#8ec07c' }
-    - { index: 109, color: '#83a598' }
-    - { index: 124, color: '#cc241d' }
-    - { index: 132, color: '#b16286' }
-    - { index: 142, color: '#b8bb26' }
-    - { index: 166, color: '#d65d0e' }
-    - { index: 167, color: '#fb4934' }
-    - { index: 172, color: '#d79921' }
-    - { index: 175, color: '#d3869b' }
-    - { index: 208, color: '#fe8019' }
-    - { index: 214, color: '#fabd2f' }
-    - { index: 223, color: '#ebdbb2' }
-    - { index: 229, color: '#fbf1c7' }
-    - { index: 234, color: '#1d2021' }
-    - { index: 235, color: '#282828' }
-    - { index: 236, color: '#32302f' }
-    - { index: 237, color: '#3c3836' }
-    - { index: 239, color: '#504945' }
-    - { index: 241, color: '#665c54' }
-    - { index: 243, color: '#7c6f64' }
-    - { index: 245, color: '#928374' }
-    - { index: 246, color: '#a89984' }
-    - { index: 248, color: '#bdae93' }
-    - { index: 250, color: '#d5c4a1' }
-
+# colors:
+#   primary:
+# # hard contrast background - '#1d2021'
+#     background:        &gruvbox_dark_bg '#282828'
+# # soft contrast background - '#32302f'
+#     foreground:        '#ebdbb2'
+#     bright_foreground: '#fbf1c7'
+#     dim_foreground:    '#a89984'
+#   cursor:
+#     text:   CellBackground
+#     cursor: CellForeground
+#   vi_mode_cursor:
+#     text:   CellBackground
+#     cursor: CellForeground
+#   # search:
+#   #   matches:
+#   #     foreground: '#000000'
+#   #     background: '#ffffff'
+#   #   focused_match:
+#   #    foreground: CellBackground
+#   #    background: CellForeground
+#   #   bar:
+#   #     background: ''
+#   #     foreground: ''
+#   # line_indicator:
+#   #   foreground: None
+#   #   background: None
+#   selection:
+#     text:       CellBackground
+#     background: CellForeground
+#   bright:
+#     black:   '#928374'
+#     red:     '#fb4934'
+#     green:   '#b8bb26'
+#     yellow:  '#fabd2f'
+#     blue:    '#83a598'
+#     magenta: '#d3869b'
+#     cyan:    '#8ec07c'
+#     white:   '#ebdbb2'
+#   normal:
+#     black:   *gruvbox_dark_bg
+#     red:     '#cc241d'
+#     green:   '#98971a'
+#     yellow:  '#d79921'
+#     blue:    '#458588'
+#     magenta: '#b16286'
+#     cyan:    '#689d6a'
+#     white:   '#a89984'
+#   dim:
+#     black:   '#32302f'
+#     red:     '#9d0006'
+#     green:   '#79740e'
+#     yellow:  '#b57614'
+#     blue:    '#076678'
+#     magenta: '#8f3f71'
+#     cyan:    '#427b58'
+#     white:   '#928374'
+#   indexed_colors:
+#   - index:  66, color: '#458588' }
+#   - index:  72, color: '#689d6a' }
+#   - index: 106, color: '#98971a' }
+#   - index: 108, color: '#8ec07c' }
+#   - index: 109, color: '#83a598' }
+#   - index: 124, color: '#cc241d' }
+#   - index: 132, color: '#b16286' }
+#   - index: 142, color: '#b8bb26' }
+#   - index: 166, color: '#d65d0e' }
+#   - index: 167, color: '#fb4934' }
+#   - index: 172, color: '#d79921' }
+#   - index: 175, color: '#d3869b' }
+#   - index: 208, color: '#fe8019' }
+#   - index: 214, color: '#fabd2f' }
+#   - index: 223, color: '#ebdbb2' }
+#   - index: 229, color: '#fbf1c7' }
+#   - index: 234, color: '#1d2021' }
+#   - index: 235, color: '#282828' }
+#   - index: 236, color: '#32302f' }
+#   - index: 237, color: '#3c3836' }
+#   - index: 239, color: '#504945' }
+#   - index: 241, color: '#665c54' }
+#   - index: 243, color: '#7c6f64' }
+#   - index: 245, color: '#928374' }
+#   - index: 246, color: '#a89984' }
+#   - index: 248, color: '#bdae93' }
+#   - index: 250, color: '#d5c4a1' }
+#
 # Colors (Tomorrow Night)
 #colors:
   # Default colors
@@ -219,14 +223,14 @@ colors:
   #  background: '#1d1f21'
   #  foreground: '#c5c8c6'
 
-    # Bright and dim foreground colors
-    #
-    # The dimmed foreground color is calculated automatically if it is not
-    # present. If the bright foreground color is not set, or
-    # `draw_bold_text_with_bright_colors` is `false`, the normal foreground
-    # color will be used.
-    #dim_foreground: '#828482'
-    #bright_foreground: '#eaeaea'
+# Bright and dim foreground colors
+#
+# The dimmed foreground color is calculated automatically if it is not
+# present. If the bright foreground color is not set, or
+# `draw_bold_text_with_bright_colors` is `false`, the normal foreground
+# color will be used.
+#dim_foreground: '#828482'
+#bright_foreground: '#eaeaea'
 
   # Cursor colors
   #
@@ -252,32 +256,32 @@ colors:
   #
   # Colors used for the search bar and match highlighting.
   #search:
-    # Allowed values are CellForeground/CellBackground, which reference the
-    # affected cell, or hexadecimal colors like #ff00ff.
-    #matches:
-    #  foreground: '#000000'
-    #  background: '#ffffff'
-    #focused_match:
-    #  foreground: '#ffffff'
-    #  background: '#000000'
+# Allowed values are CellForeground/CellBackground, which reference the
+# affected cell, or hexadecimal colors like #ff00ff.
+#matches:
+#  foreground: '#000000'
+#  background: '#ffffff'
+#focused_match:
+#  foreground: '#ffffff'
+#  background: '#000000'
 
   # Keyboard hints
   #hints:
-    # First character in the hint label
-    #
-    # Allowed values are CellForeground/CellBackground, which reference the
-    # affected cell, or hexadecimal colors like #ff00ff.
-    #start:
-    #  foreground: '#1d1f21'
-    #  background: '#e9ff5e'
+# First character in the hint label
+#
+# Allowed values are CellForeground/CellBackground, which reference the
+# affected cell, or hexadecimal colors like #ff00ff.
+#start:
+#  foreground: '#1d1f21'
+#  background: '#e9ff5e'
 
-    # All characters after the first one in the hint label
-    #
-    # Allowed values are CellForeground/CellBackground, which reference the
-    # affected cell, or hexadecimal colors like #ff00ff.
-    #end:
-    #  foreground: '#e9ff5e'
-    #  background: '#1d1f21'
+# All characters after the first one in the hint label
+#
+# Allowed values are CellForeground/CellBackground, which reference the
+# affected cell, or hexadecimal colors like #ff00ff.
+#end:
+#  foreground: '#e9ff5e'
+#  background: '#1d1f21'
 
   # Line indicator
   #
@@ -413,21 +417,21 @@ colors:
 cursor:
   # Cursor style
   style:
-    # Cursor shape
-    #
-    # Values for `shape`:
-    #   - ▇ Block
-    #   - _ Underline
-    #   - | Beam
+# Cursor shape
+#
+# Values for `shape`:
+#   - ▇ Block
+#   - _ Underline
+#   - | Beam
     shape: Block
 
-    # Cursor blinking state
-    #
-    # Values for `blinking`:
-    #   - Never: Prevent the cursor from ever blinking
-    #   - Off: Disable blinking by default
-    #   - On: Enable blinking by default
-    #   - Always: Force the cursor to always blink
+# Cursor blinking state
+#
+# Values for `blinking`:
+#   - Never: Prevent the cursor from ever blinking
+#   - Off: Disable blinking by default
+#   - On: Enable blinking by default
+#   - Always: Force the cursor to always blink
     blinking: Always
 
   # Vi mode cursor style
@@ -439,7 +443,7 @@ cursor:
   vi_mode_style: None
 
   # Cursor blinking interval in milliseconds.
-  blink_interval: 500
+  blink_interval: 210
 
   # Time after which cursor stops blinking, in seconds.
   #
@@ -574,9 +578,9 @@ cursor:
 #
 # - `mods` (see key bindings)
 #mouse_bindings:
-#  - { mouse: Right,                 action: ExpandSelection }
-#  - { mouse: Right,  mods: Control, action: ExpandSelection }
-#  - { mouse: Middle, mode: ~Vi,     action: PasteSelection  }
+#- mouse: Right,                 action: ExpandSelection }
+#- mouse: Right,  mods: Control, action: ExpandSelection }
+#- mouse: Middle, mode: ~Vi,     action: PasteSelection  }
 
 # Key bindings
 #
@@ -786,6 +790,46 @@ cursor:
 #
 # If the same trigger is assigned to multiple actions, all of them are executed
 # in the order they were defined in.
+# Rename the current tmux window
+key_bindings:
+  # Rename the current tmux window
+  - { key: Comma, mods: Command, chars: "\x01\x2c" }
+  # Select a new tmux session for the attached client interactively
+  - { key: K, mods: Command, chars: "\x01\x73" }
+  # Select window 1-9
+  - { key: Key1, mods: Command, chars: "\x01\x31" }
+  - { key: Key2, mods: Command, chars: "\x01\x32" }
+  - { key: Key3, mods: Command, chars: "\x01\x33" }
+  - { key: Key4, mods: Command, chars: "\x01\x34" }
+  - { key: Key5, mods: Command, chars: "\x01\x35" }
+  - { key: Key6, mods: Command, chars: "\x01\x36" }
+  - { key: Key7, mods: Command, chars: "\x01\x37" }
+  - { key: Key8, mods: Command, chars: "\x01\x38" }
+  - { key: Key9, mods: Command, chars: "\x01\x39" }
+  # Switch to last tmux session
+  - { key: L, mods: Command, chars: "\x01\x4c" }
+  - { key: LBracket, mods: Command, chars: "\x01\x5b" }
+  # Change to the previous tmux window
+  - { key: LBracket, mods: Command|Shift, chars: "\x01\x70" }
+  # Split the current pane into two, left and right
+  - { key: N, mods: Command|Shift, chars: "\x01\x7c" }
+  # Split the current pane into two, top and bottom.
+  - { key: N, mods: Command, chars: "\x01\x2d" }
+  # Detach the current tmux client
+  - { key: D, mods: Command, chars: "\x01\x64" }
+  # Change to the next tmux window
+  - { key: RBracket, mods: Command|Shift, chars: "\x01\x6e" }
+  # Type <escape>:w<enter> to save neovim
+  - { key: S, mods: Command, chars: "\x1b\x3a\x77\x0a" }
+  # Create a new tmux window
+  - { key: T, mods: Command, chars: "\x01\x63" }
+  # Break the current tmux pane out of the tmux window
+  - { key: T, mods: Command|Shift, chars: "\x01\x21" }
+  # Kill the current tmux pane (and window if last pane)
+  - { key: W, mods: Command, chars: "\x01\x78" }
+  # Toggle the zoom state of the current tmux pane
+  - { key: Z, mods: Command, chars: "\x01\x7a" }
+
 #key_bindings:
   #- { key: Paste,                                       action: Paste          }
   #- { key: Copy,                                        action: Copy           }
