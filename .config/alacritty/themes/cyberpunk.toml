@@ -1,89 +1,89 @@
-# Enhanced Professional Cyberpunk Theme
-# A modern take on the classic cyberpunk aesthetic with improved readability
+# Vibrant Modern Dark Theme
+# A vibrant, high-contrast dark theme with modern GitHub-inspired colors
 #
-# name: Professional Cyberpunk
+# name: Vibrant Modern Dark
 # author: Saurabh
-# description: A modern cyberpunk theme with enhanced readability and professional aesthetics
+# description: A vibrant dark theme with modern colors and high contrast for excellent readability
 
 [colors.bright]
-black = "#29293f"
-blue = "#67d3ff"
-cyan = "#5df8ff"
-green = "#72ffd0"
-magenta = "#fc75ea"
-red = "#ff5286"
+black = "#2d333b"
+blue = "#58a6ff"
+cyan = "#39c5cf"
+green = "#3bce9d"
+magenta = "#d2a8ff"
+red = "#ff7b72"
 white = "#ffffff"
-yellow = "#fef26c"
+yellow = "#e3b341"
 
 [colors.cursor]
-cursor = "#00ff9f"
-text = "#0a0a16"
+cursor = "#2ea4ad"
+text = "#0d1117"
 
 [colors.hints.end]
-background = "#0a0a16"
-foreground = "#00ff9f"
+background = "#0d1117"
+foreground = "#2ea4ad"
 
 [colors.hints.start]
-background = "#00ff9f"
-foreground = "#0a0a16"
+background = "#2ea4ad"
+foreground = "#0d1117"
 
 [colors.line_indicator]
 background = "None"
 foreground = "None"
 
 [colors.normal]
-black = "#151528"
-blue = "#00bfff"
-cyan = "#00faff"
-green = "#00ff9f"
-magenta = "#fb33db"
-red = "#ff2e6d"
+black = "#161b22"
+blue = "#1f6feb"
+cyan = "#2ea4ad"
+green = "#26a869"
+magenta = "#c770f0"
+red = "#f85149"
 white = "#f0f0f0"
-yellow = "#fcee54"
+yellow = "#c69026"
 
 [colors.primary]
-background = "#0c0c1d"
+background = "#0d1117"
 bright_foreground = "#ffffff"
 foreground = "#f0f0f0"
 dim_foreground = "#c9c9c9"
 
 [colors.search.focused_match]
-background = "#fc00ff"
-foreground = "#0a0a16"
+background = "#c770f0"
+foreground = "#0d1117"
 
 [colors.search.matches]
-background = "#00ff9f"
-foreground = "#0a0a16"
+background = "#2ea043"
+foreground = "#0d1117"
 
 [colors.selection]
-background = "#fc28a8"
-text = "#0a0a16"
+background = "#1158c7"
+text = "#f0f0f0"
 
 [colors.vi_mode_cursor]
-cursor = "#fc00ff"
-text = "#0a0a16"
+cursor = "#c770f0"
+text = "#0d1117"
 
 # Enhanced indexed colors for better terminal app support
 [[colors.indexed_colors]]
 index = 16
-color = "#3b79c7"
+color = "#2188ff"
 
 [[colors.indexed_colors]]
 index = 17
-color = "#7d4cdb"
+color = "#a371f7"
 
 [[colors.indexed_colors]]
 index = 18
-color = "#36c98d"
+color = "#2ea043"
 
 [[colors.indexed_colors]]
 index = 19
-color = "#ff9b50"
+color = "#f0883e"
 
 [[colors.indexed_colors]]
 index = 20
-color = "#2c3e50"
+color = "#1e4273"
 
 [[colors.indexed_colors]]
 index = 21
-color = "#e84393"
+color = "#fc55d3"
