@@ -187,9 +187,6 @@ animation = "EaseOutExpo"
 color = "#505050"
 duration = 200
 
-# Visual bell settings
-visual_bell = { animation = "EaseOutExpo", duration = 150, color = "#3074b0" }
-
 [cursor]
 blink_interval = 550
 blink_timeout = 0
@@ -229,11 +226,6 @@ style = "Regular"
 x = 0
 y = 0
 
-# Better performance and rendering
-[advanced]
-renderer = "gpu"
-use_thin_strokes = true
-
 # Optimize rendering speed
 [debug]
 persistent_logging = false
@@ -261,8 +253,6 @@ mods = "None"
 [scrolling]
 history = 10000
 multiplier = 3
-faux_multiplier = 100
-auto_scroll = true
 
 [mouse]
 hide_when_typing = true
