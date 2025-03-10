@@ -54,3 +54,6 @@ nnoremap("<leader>j", "<cmd>lprev<CR>zz")
 
 nnoremap("<leader>s", ":%s/\\<<C-r><C-w>\\>/<C-r><C-w>/gI<Left><Left><Left>")
 nnoremap("<leader>x", "<cmd>!chmod +x %<CR>", { silent = true })
+
+nnoremap("<leader>fml", "<cmd>CellularAutomaton make_it_rain<CR>")
+nnoremap("<leader>jml", "<cmd>CellularAutomaton game_of_life<CR>")
