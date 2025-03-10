@@ -1,0 +1,2 @@
+# Ignore plugins directory as it contains git repositories
+plugins/
