@@ -16,10 +16,39 @@ return require("packer").startup(function()
     })
 
     -- All the things
+    use {
+        'VonHeikemen/lsp-zero.nvim',
+        requires = {
+            -- LSP Support
+            {'neovim/nvim-lspconfig'},
+            {'williamboman/mason.nvim'},
+            {'williamboman/mason-lspconfig.nvim'},
+
+            -- Autocompletion
+            {'hrsh7th/nvim-cmp'},
+            {'hrsh7th/cmp-buffer'},
+            {'hrsh7th/cmp-path'},
+            {'saadparwaiz1/cmp_luasnip'},
+            {'hrsh7th/cmp-nvim-lsp'},
+            {'hrsh7th/cmp-nvim-lua'},
+
+            -- Snippets
+            {'L3MON4D3/LuaSnip'},
+            {'rafamadriz/friendly-snippets'},
+        }
+    }
     use("neovim/nvim-lspconfig")
     use("hrsh7th/cmp-nvim-lsp")
     use("hrsh7th/cmp-buffer")
     use("hrsh7th/nvim-cmp")
+
+    use("hrsh7th/cmp-nvim-lsp-signature-help")
+    use("hrsh7th/cmp-nvim-lua")
+    use("hrsh7th/cmp-path")
+    use("hrsh7th/cmp-vsnip")
+    use("hrsh7th/vim-vsnip")
+
+
     use("tzachar/cmp-tabnine", { run = "./install.sh" })
     use("onsails/lspkind-nvim")
     use("nvim-lua/lsp_extensions.nvim")
@@ -32,12 +61,10 @@ return require("packer").startup(function()
     --testing lsp
     use("williamboman/mason.nvim") -- simple to use language server installer
     use("williamboman/mason-lspconfig.nvim") -- simple to use language server installe
-    use("neovim/nvim-lspconfig")
 
     -- Testing out jupyter ascending
     use('untitled-ai/jupyter_ascending.vim')
     use('bfredl/nvim-ipy')
-    use('hkupty/iron.nvim')
     use('GCBallesteros/jupytext.vim')
     --    use('GCBallesteros/vim-textobj-hydrogen')
 
@@ -86,6 +113,44 @@ return require("packer").startup(function()
     use("mfussenegger/nvim-jdtls")
 
 
+    use {
+        "folke/which-key.nvim",
+        config = function()
+            require("which-key").setup {
+                -- your configuration comes here
+                -- or leave it empty to use the default settings
+                -- refer to the configuration section below
+            }
+        end
+    }
+
+    use ('simrat39/rust-tools.nvim')
+
+
+    use ('eandrju/cellular-automaton.nvim')
+    use ('prichrd/netrw.nvim')
+
+    use "jose-elias-alvarez/null-ls.nvim" -- for formatters and linters
+    use "ray-x/lsp_signature.nvim"
+    -- use {
+    --     "zbirenbaum/copilot.lua",
+    --     event = { "VimEnter" },
+    --     config = function()
+    --         vim.defer_fn(function()
+    --             require "bugkill3r.copilot"
+    --         end, 100)
+    --     end,
+    -- }
+    use "lvimuser/lsp-inlayhints.nvim"
+    use "Saecki/crates.nvim"
+
+    use "github/copilot.vim"
+
+    use "onsails/lspkind.nvim"
+
+    use "supermaven-inc/supermaven-nvim"
+
+    use "nvim-neotest/nvim-nio"
 
     --[[
     --

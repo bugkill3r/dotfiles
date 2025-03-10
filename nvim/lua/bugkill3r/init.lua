@@ -3,8 +3,11 @@ require("bugkill3r.packer")
 require("bugkill3r.debugger")
 
 -- lsp
-require("bugkill3r.cmp")
-require("bugkill3r.lsp")
+-- require("bugkill3r.cmp")
+-- require("bugkill3r.lsp")
+-- require("bugkill3r.icons")
+-- require("bugkill3r.dap")
+require("bugkill3r.rt")
 
 local augroup = vim.api.nvim_create_augroup
 bugkill3rGroup = augroup('bugkill3r', {})
@@ -27,14 +30,32 @@ autocmd('TextYankPost', {
     end,
 })
 
+
+-- group all in one, with multiple patterns
+--
+-- autocmd({"BufEnter", "BufWinEnter", "TabEnter"}, {
+--     group = bugkill3rGroup,
+--     pattern = "*.rs",
+--     callback = function()
+--         require("lsp_extensions").inlay_hints{}
+--     end
+-- })
+
 autocmd({"BufEnter", "BufWinEnter", "TabEnter"}, {
     group = bugkill3rGroup,
-    pattern = "*.rs",
-    callback = function()
+    pattern = "*.java",
+    callback = function ()
         require("lsp_extensions").inlay_hints{}
     end
 })
 
+autocmd({"BufEnter", "BufWinEnter", "TabEnter"}, {
+    group = bugkill3rGroup,
+    pattern = "*.py",
+    callback = function()
+        require("lsp_extensions").inlay_hints{}
+    end
+})
 autocmd({"BufWritePre"}, {
     group = bugkill3rGroup,
     pattern = "*",
