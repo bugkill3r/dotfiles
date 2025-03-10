@@ -19,11 +19,33 @@ window:
   opacity: 0.90
   # opacity: 1.0
 
+  # Startup Mode (changes require restart)
+  #
+  # Values for `startup_mode`:
+  #   - Windowed
+  #   - Maximized
+  #   - Fullscreen
+  #
+  # Values for `startup_mode` (macOS only):
+  #   - SimpleFullscreen
+  #startup_mode: Windowed
+
   # Enable dynamic title
   dynamic_title: true
 
+  # Window class (Linux/BSD only):
+  #class:
+  # Application instance name
+  #instance: Alacritty
+  # General application class
+  #general: Alacritty
+
 scrolling:
+  # Maximum number of lines in the scrollback buffer.
+  # Specifying '0' will disable scrolling.
   history: 10000
+
+  # Scrolling distance multiplier.
   multiplier: 3
 
 # Font configuration
@@ -55,6 +77,13 @@ font:
     x: 0
     y: 0
 
+  # Use built-in font for box drawing characters.
+  #
+  # If `true`, Alacritty will use a custom built-in font for box drawing
+  # characters (Unicode points 2500 - 259f).
+  #
+  #builtin_box_drawing: true
+
 # Draw bold text with bright colors for better visibility
 draw_bold_text_with_bright_colors: true
 
@@ -68,6 +97,14 @@ cursor:
   blink_timeout: 0
   unfocused_hollow: true
   thickness: 0.15
+
+  # Vi mode cursor style
+  #
+  # If the vi mode cursor style is `None` or not specified, it will fall back to
+  # the style of the active value of the normal cursor.
+  #
+  # See `cursor.style` for available options.
+  vi_mode_style: None
 
 # Show URLs as hints when hovering
 hints:
@@ -126,6 +163,19 @@ key_bindings:
   
   # Fullscreen
   - { key: F, mods: Command|Control, action: ToggleFullscreen }
+
+# Live config reload (changes require restart)
+#live_config_reload: true
+
+# Shell
+#
+# You can set `shell.program` to the path of your favorite shell, e.g.
+# `/bin/fish`. Entries in `shell.args` are passed unmodified as arguments to the
+# shell.
+#shell:
+#  program: /bin/bash
+#  args:
+#    - --login
 
 # Show a visual bell animation
 bell:
