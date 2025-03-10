@@ -42,3 +42,9 @@ vim.opt.shortmess:append("c")
 
 vim.g.mapleader = " "
 
+-- Netrw configuration
+vim.g.netrw_banner = 0      -- Hide banner
+vim.g.netrw_liststyle = 3   -- Tree view
+vim.g.netrw_browse_split = 0 -- Open files in current window
+vim.g.netrw_winsize = 25    -- Set width of explorer window
+
