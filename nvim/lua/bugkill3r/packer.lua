@@ -9,11 +9,30 @@ return require("packer").startup(function()
     use("nvim-lua/plenary.nvim")
     use("nvim-lua/popup.nvim")
     use("nvim-telescope/telescope.nvim")
+    
+    -- Telescope extensions
+    use {'nvim-telescope/telescope-fzf-native.nvim', run = 'make' }
+    
+    -- FZF integration
+    use { 'junegunn/fzf', run = './install --bin' }
+    use { 'junegunn/fzf.vim' }
+
+    -- Git integration
+    use {
+        'lewis6991/gitsigns.nvim',
+        requires = { 'nvim-lua/plenary.nvim' }
+    }
+
+    -- Add nvim-web-devicons as a direct dependency
+    use("nvim-tree/nvim-web-devicons")
 
     use({
         'nvim-lualine/lualine.nvim',
         requires = { 'kyazdani42/nvim-web-devicons', opt = true }
     })
+
+    -- JSON schema support
+    use("b0o/schemastore.nvim")
 
     -- All the things
     use {
@@ -84,6 +103,7 @@ return require("packer").startup(function()
         run = ":TSUpdate"
     })
 
+    use("nvim-treesitter/nvim-treesitter-textobjects")
     use("nvim-treesitter/playground")
     use("romgrk/nvim-treesitter-context")
 

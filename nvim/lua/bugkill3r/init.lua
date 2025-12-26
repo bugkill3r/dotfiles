@@ -3,11 +3,13 @@ require("bugkill3r.packer")
 require("bugkill3r.debugger")
 
 -- lsp
--- require("bugkill3r.cmp")
--- require("bugkill3r.lsp")
--- require("bugkill3r.icons")
--- require("bugkill3r.dap")
+require("bugkill3r.cmp")
+require("bugkill3r.lsp").setup()
+require("bugkill3r.icons")
+require("bugkill3r.dap")
 require("bugkill3r.rt")
+require("bugkill3r.fzf")
+require("bugkill3r.gitsigns")
 
 local augroup = vim.api.nvim_create_augroup
 bugkill3rGroup = augroup('bugkill3r', {})

@@ -1,4 +1,10 @@
-require("nvim-web-devicons").setup {
+local status_ok, devicons = pcall(require, "nvim-web-devicons")
+if not status_ok then
+  vim.notify("nvim-web-devicons not found. Icons might not display properly.")
+  return
+end
+
+devicons.setup {
   -- your personalization configuration comes here
   -- globally enable different highlight colors per icon (default to true)
   color_icons = true;
