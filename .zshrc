@@ -113,32 +113,34 @@ source $ZSH/oh-my-zsh.sh
 # Example aliases
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
-alias twork="/Users/mishra.saurabh/tmux-work-setup.sh"
-alias tsave="/Users/mishra.saurabh/tmux-save.sh"
+alias twork="$HOME/Dev/dotfiles/tmux-work-setup.sh"
+alias tsave="$HOME/Dev/dotfiles/tmux-save.sh"
 
 # Terminal color settings
 export TERM="xterm-256color"
 
-# Colors for syntax highlighting
-ZSH_HIGHLIGHT_STYLES[default]=none
-ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red
-ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=yellow
-ZSH_HIGHLIGHT_STYLES[alias]=fg=cyan
-ZSH_HIGHLIGHT_STYLES[builtin]=fg=cyan
-ZSH_HIGHLIGHT_STYLES[function]=fg=cyan
-ZSH_HIGHLIGHT_STYLES[command]=fg=cyan
-ZSH_HIGHLIGHT_STYLES[precommand]=fg=green
-ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=blue
-ZSH_HIGHLIGHT_STYLES[hashed-command]=fg=blue
-ZSH_HIGHLIGHT_STYLES[path]=fg=blue
-ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=blue
-ZSH_HIGHLIGHT_STYLES[globbing]=fg=magenta
-ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=yellow
-ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=green
-ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=green
-ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=magenta
-ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=magenta
-ZSH_HIGHLIGHT_STYLES[assign]=fg=blue
+# Colors for syntax highlighting (must be set after zsh-syntax-highlighting is loaded)
+if [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
+  ZSH_HIGHLIGHT_STYLES[default]=none
+  ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red
+  ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=yellow
+  ZSH_HIGHLIGHT_STYLES[alias]=fg=cyan
+  ZSH_HIGHLIGHT_STYLES[builtin]=fg=cyan
+  ZSH_HIGHLIGHT_STYLES[function]=fg=cyan
+  ZSH_HIGHLIGHT_STYLES[command]=fg=cyan
+  ZSH_HIGHLIGHT_STYLES[precommand]=fg=green
+  ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=blue
+  ZSH_HIGHLIGHT_STYLES[hashed-command]=fg=blue
+  ZSH_HIGHLIGHT_STYLES[path]=fg=blue
+  ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=blue
+  ZSH_HIGHLIGHT_STYLES[globbing]=fg=magenta
+  ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=yellow
+  ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=green
+  ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=green
+  ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=magenta
+  ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=magenta
+  ZSH_HIGHLIGHT_STYLES[assign]=fg=blue
+fi
 
 # Show hidden files in auto-complete
 setopt globdots
@@ -163,8 +165,21 @@ export PATH=/usr/local/bin:$PATH
 export PATH=$GOPATH/bin:$PATH
 
 # Added by Antigravity
-export PATH="/Users/mishra.saurabh/.antigravity/antigravity/bin:$PATH"
+export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
 # Google Cloud SDK completion
-source /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc
-source /opt/homebrew/share/google-cloud-sdk/path.zsh.inc
+[ -f /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc ] && source /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc
+[ -f /opt/homebrew/share/google-cloud-sdk/path.zsh.inc ] && source /opt/homebrew/share/google-cloud-sdk/path.zsh.inc
+
+# Fix brew completion issues
+# Remove broken symlinks before compinit runs
+if [ -L "$(brew --prefix)/share/zsh/site-functions/_brew_services" ]; then
+  if [ ! -f "$(brew --prefix)/share/zsh/site-functions/_brew_services" ]; then
+    # Symlink is broken, remove it
+    rm -f "$(brew --prefix)/share/zsh/site-functions/_brew_services" 2>/dev/null || true
+  fi
+fi
+# Configure compinit to ignore missing files (set before Oh My Zsh loads)
+# This is handled by Oh My Zsh, but we can ensure it's set
+autoload -Uz compinit
+compinit -u 2>/dev/null || true

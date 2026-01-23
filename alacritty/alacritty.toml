@@ -116,7 +116,7 @@ key = "Z"
 mods = "Command"
 
 [general]
-import = ["/Users/mishra.saurabh/.config/alacritty/themes/minimal-dark.toml"]
+import = ["~/.config/alacritty/themes/minimal-dark.toml"]
 
 [cursor]
 blink_interval = 210
@@ -128,12 +128,15 @@ vi_mode_style = "None"
 blinking = "Always"
 shape = "Block"
 
+[font]
+size = 13.0
+
 [font.bold]
-family = "CaskaydiaCove Nerd Font"
+family = "CaskaydiaCove Nerd Font Mono"
 style = "Bold"
 
 [font.bold_italic]
-family = "CaskaydiaCove Nerd Font"
+family = "CaskaydiaCove Nerd Font Mono"
 style = "Bold Italic"
 
 [font.glyph_offset]
@@ -141,11 +144,11 @@ x = 0
 y = 0
 
 [font.italic]
-family = "CaskaydiaCove Nerd Font"
+family = "CaskaydiaCove Nerd Font Mono"
 style = "Italic"
 
 [font.normal]
-family = "CaskaydiaCove Nerd Font"
+family = "CaskaydiaCove Nerd Font Mono"
 style = "Regular"
 
 [font.offset]
