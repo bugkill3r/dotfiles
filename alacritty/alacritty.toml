@@ -189,6 +189,7 @@ opacity = 0.80
 blur = true
 dynamic_title = true
 startup_mode = "Windowed"
+option_as_alt = "Both"
 
 [window.dimensions]
 columns = 140

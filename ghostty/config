@@ -1,0 +1,84 @@
+# Font
+font-family = CaskaydiaCove Nerd Font Mono
+font-size = 13
+font-feature = +calt
+
+# Theme - Nord base with pure black background
+background = 000000
+foreground = d8dee9
+selection-foreground = d8dee9
+selection-background = 3b4252
+
+# Palette (Nord)
+palette = 0=#000000
+palette = 1=#bf616a
+palette = 2=#a3be8c
+palette = 3=#ebcb8b
+palette = 4=#5e81ac
+palette = 5=#b48ead
+palette = 6=#88c0d0
+palette = 7=#e5e9f0
+palette = 8=#555555
+palette = 9=#bf616a
+palette = 10=#a3be8c
+palette = 11=#ebcb8b
+palette = 12=#81a1c1
+palette = 13=#b48ead
+palette = 14=#8fbcbb
+palette = 15=#e5e9f0
+
+# Window
+window-decoration = none
+window-padding-x = 10
+window-padding-y = 10
+background-opacity = 0.90
+background-blur-radius = 20
+
+# Cursor
+cursor-style = block
+cursor-style-blink = true
+cursor-color = 61afef
+
+# Behavior
+mouse-hide-while-typing = true
+macos-option-as-alt = true
+scrollback-limit = 10000
+
+# Keybindings - tmux prefix Ctrl-b (\x02)
+keybind = super+1=text:\x02\x31
+keybind = super+2=text:\x02\x32
+keybind = super+3=text:\x02\x33
+keybind = super+4=text:\x02\x34
+keybind = super+5=text:\x02\x35
+keybind = super+6=text:\x02\x36
+keybind = super+7=text:\x02\x37
+keybind = super+8=text:\x02\x38
+keybind = super+9=text:\x02\x39
+keybind = super+digit_1=text:\x02\x31
+keybind = super+digit_2=text:\x02\x32
+keybind = super+digit_3=text:\x02\x33
+keybind = super+digit_4=text:\x02\x34
+keybind = super+digit_5=text:\x02\x35
+keybind = super+digit_6=text:\x02\x36
+keybind = super+digit_7=text:\x02\x37
+keybind = super+digit_8=text:\x02\x38
+keybind = super+digit_9=text:\x02\x39
+keybind = super+t=text:\x02c
+keybind = super+shift+t=text:\x02!
+keybind = super+w=text:\x02x
+keybind = super+n=text:\x02-
+keybind = super+shift+n=text:\x02|
+keybind = super+z=text:\x02z
+keybind = super+d=text:\x02d
+keybind = super+k=text:\x02s
+keybind = super+l=text:\x02L
+keybind = super+comma=text:\x02,
+keybind = super+left_bracket=text:\x02[
+keybind = super+shift+left_bracket=text:\x02p
+keybind = super+shift+right_bracket=text:\x02n
+keybind = super+f=text:\x02/
+keybind = super+s=text:\x1b:w
+keybind = super+enter=toggle_fullscreen
+keybind = super+equal=increase_font_size:1
+keybind = super+minus=decrease_font_size:1
+keybind = super+0=reset_font_size
