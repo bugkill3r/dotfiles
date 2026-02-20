@@ -1,90 +1,90 @@
 [[keyboard.bindings]]
-chars = "\u0001,"
+chars = "\u0002,"
 key = "Comma"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001s"
+chars = "\u0002s"
 key = "K"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00011"
+chars = "\u00021"
 key = "Key1"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00012"
+chars = "\u00022"
 key = "Key2"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00013"
+chars = "\u00023"
 key = "Key3"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00014"
+chars = "\u00024"
 key = "Key4"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00015"
+chars = "\u00025"
 key = "Key5"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00016"
+chars = "\u00026"
 key = "Key6"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00017"
+chars = "\u00027"
 key = "Key7"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00018"
+chars = "\u00028"
 key = "Key8"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u00019"
+chars = "\u00029"
 key = "Key9"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001L"
+chars = "\u0002L"
 key = "L"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001["
+chars = "\u0002["
 key = "LBracket"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001p"
+chars = "\u0002p"
 key = "LBracket"
 mods = "Command|Shift"
 
 [[keyboard.bindings]]
-chars = "\u0001|"
+chars = "\u0002|"
 key = "N"
 mods = "Command|Shift"
 
 [[keyboard.bindings]]
-chars = "\u0001-"
+chars = "\u0002-"
 key = "N"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001d"
+chars = "\u0002d"
 key = "D"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001n"
+chars = "\u0002n"
 key = "RBracket"
 mods = "Command|Shift"
 
@@ -96,23 +96,48 @@ key = "S"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001c"
+chars = "\u0002c"
 key = "T"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001!"
+chars = "\u0002!"
 key = "T"
 mods = "Command|Shift"
 
 [[keyboard.bindings]]
-chars = "\u0001x"
+chars = "\u0002x"
 key = "W"
 mods = "Command"
 
 [[keyboard.bindings]]
-chars = "\u0001z"
+chars = "\u0002z"
 key = "Z"
+mods = "Command"
+
+[[keyboard.bindings]]
+chars = "\u0002/"
+key = "F"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "ToggleFullscreen"
+key = "Return"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "IncreaseFontSize"
+key = "Equals"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "DecreaseFontSize"
+key = "Minus"
+mods = "Command"
+
+[[keyboard.bindings]]
+action = "ResetFontSize"
+key = "Key0"
 mods = "Command"
 
 [general]
@@ -172,5 +197,11 @@ lines = 38
 [window.padding]
 x = 10
 y = 10
+
+[selection]
+save_to_clipboard = false
+
+[mouse]
+hide_when_typing = true
 
 [keyboard]
