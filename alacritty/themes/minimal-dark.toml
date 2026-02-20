@@ -11,7 +11,7 @@ white = "#e5e9f0"
 yellow = "#ebcb8b"
 
 [colors.cursor]
-cursor = "#d8dee9"
+cursor = "#61afef"
 text = "#000000"
 
 [colors.normal]
@@ -30,7 +30,7 @@ foreground = "#d8dee9"
 
 # Selection colors
 [colors.selection]
-background = "#2e3440"
+background = "#3b4252"
 text = "#d8dee9"
 
 [colors.search.matches]
