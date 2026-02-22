@@ -1,0 +1,62 @@
+#!/usr/bin/env bash
+# gtheme — Ghostty live theme picker
+# Scroll through themes and see them applied live. Enter keeps, Esc reverts.
+
+THEMES_DIR="/Applications/Ghostty.app/Contents/Resources/ghostty/themes"
+THEME_FILE="$HOME/.config/ghostty/current-theme"
+LAST_THEME_FILE="$HOME/.config/ghostty/.last-theme"
+
+if [ ! -d "$THEMES_DIR" ]; then
+  echo "error: Ghostty themes directory not found at $THEMES_DIR" >&2
+  exit 1
+fi
+
+_ghostty_reload() {
+  osascript -e 'tell application "System Events" to keystroke "," using {command down, shift down}' 2>/dev/null
+}
+
+_apply_theme() {
+  local theme="$1"
+  if [ -z "$theme" ]; then
+    : > "$THEME_FILE"
+  else
+    printf 'theme = %s\n' "$theme" > "$THEME_FILE"
+  fi
+  _ghostty_reload
+}
+
+# Save current state so we can revert on Esc
+original_content=$(cat "$THEME_FILE" 2>/dev/null || echo "")
+last_theme=$(cat "$LAST_THEME_FILE" 2>/dev/null || echo "")
+
+# Build list: last used theme first, then rest alphabetically
+theme_list=$(
+  if [ -n "$last_theme" ] && [ -f "$THEMES_DIR/$last_theme" ]; then
+    echo "$last_theme"
+    ls "$THEMES_DIR" | grep -vxF "$last_theme"
+  else
+    ls "$THEMES_DIR"
+  fi
+)
+
+selected=$(printf '%s\n' "$theme_list" | \
+  fzf \
+    --no-sort \
+    --prompt="  theme > " \
+    --header="$(printf 'Enter: apply  |  Esc: revert\n%d themes available' "$(printf '%s\n' "$theme_list" | wc -l | tr -d ' ')")" \
+    --bind="focus:execute-silent(
+      theme={};
+      if [ -n \"\$theme\" ]; then
+        printf 'theme = %s\n' \"\$theme\" > '$THEME_FILE';
+        osascript -e 'tell application \"System Events\" to keystroke \",\" using {command down, shift down}' 2>/dev/null;
+      fi
+    )")
+
+if [ -n "$selected" ]; then
+  _apply_theme "$selected"
+  echo "$selected" > "$LAST_THEME_FILE"
+  echo "Theme applied: $selected"
+else
+  printf '%s\n' "$original_content" > "$THEME_FILE"
+  _ghostty_reload
+fi

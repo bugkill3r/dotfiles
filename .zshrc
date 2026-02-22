@@ -115,6 +115,7 @@ source $ZSH/oh-my-zsh.sh
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 alias twork="$HOME/Dev/dotfiles/tmux-work-setup.sh"
 alias tsave="$HOME/Dev/dotfiles/tmux-save.sh"
+alias cat='bat --paging=never'
 
 # Terminal color settings
 export TERM="xterm-256color"
@@ -154,18 +155,38 @@ function zshexit() {
   fi
 }
 
-[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(zoxide init zsh)"
 
-# nvm (Node Version Manager)
+# fzf
+[ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
+export FZF_TMUX=1
+export FZF_TMUX_OPTS="-p 80%,60%"
+export FZF_DEFAULT_OPTS="
+  --color=bg+:#2e3440,bg:#000000,spinner:#81a1c1,hl:#616e88
+  --color=fg:#d8dee9,header:#616e88,info:#81a1c1,pointer:#bf616a
+  --color=marker:#a3be8c,fg+:#d8dee9,prompt:#81a1c1,hl+:#81a1c1
+  --border --height 60%"
+export FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :80 {}' --preview-window=right:50%"
+export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -40'"
+
+# nvm — lazy loaded for fast shell startup
 export NVM_DIR="$HOME/.nvm"
-[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+_load_nvm() {
+  unset -f nvm node npm npx yarn
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+}
+nvm()  { _load_nvm; nvm "$@"; }
+node() { _load_nvm; node "$@"; }
+npm()  { _load_nvm; npm "$@"; }
+npx()  { _load_nvm; npx "$@"; }
+yarn() { _load_nvm; yarn "$@"; }
 
 # Digital Billing Service Environment Variables
 export GOPRIVATE="github.com/razorpay/*"
 export GOPATH=$HOME/go
 export GOOSE_MIGRATION_DIR=internal/database/migrations
+export PATH="$HOME/Dev/dotfiles/bin:$PATH"
 export PATH=/usr/local/bin:$PATH
 export PATH=$GOPATH/bin:$PATH
 
