@@ -157,6 +157,11 @@ function zshexit() {
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 eval "$(zoxide init zsh)"
 
+# nvm (Node Version Manager)
+export NVM_DIR="$HOME/.nvm"
+[ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+[ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+
 # Digital Billing Service Environment Variables
 export GOPRIVATE="github.com/razorpay/*"
 export GOPATH=$HOME/go

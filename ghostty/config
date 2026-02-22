@@ -43,6 +43,7 @@ cursor-color = 61afef
 mouse-hide-while-typing = true
 macos-option-as-alt = true
 scrollback-limit = 10000
+confirm-close-surface = false
 
 # Keybindings - tmux prefix Ctrl-b (\x02)
 keybind = super+1=text:\x02\x31
