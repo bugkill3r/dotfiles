@@ -83,3 +83,6 @@ keybind = super+enter=toggle_fullscreen
 keybind = super+equal=increase_font_size:1
 keybind = super+minus=decrease_font_size:1
 keybind = super+0=reset_font_size
+
+# Theme override (managed by gtheme script)
+config-file = ~/.config/ghostty/current-theme
