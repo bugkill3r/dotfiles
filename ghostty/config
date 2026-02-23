@@ -31,7 +31,7 @@ palette = 15=#e5e9f0
 window-decoration = none
 window-padding-x = 10
 window-padding-y = 10
-background-opacity = 0.90
+background-opacity = 0.95
 background-blur-radius = 20
 
 # Cursor
@@ -73,7 +73,7 @@ keybind = super+z=text:\x02z
 keybind = super+d=text:\x02d
 keybind = super+k=text:\x02s
 keybind = super+l=text:\x02L
-keybind = super+comma=text:\x02,
+keybind = super+r=text:\x02,
 keybind = super+left_bracket=text:\x02[
 keybind = super+shift+left_bracket=text:\x02p
 keybind = super+shift+right_bracket=text:\x02n
