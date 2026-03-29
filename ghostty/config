@@ -2,6 +2,7 @@
 font-family = CaskaydiaCove Nerd Font Mono
 font-size = 13
 font-feature = +calt
+font-feature = +ss01
 
 # Theme - Nord base with pure black background
 background = 000000
@@ -29,32 +30,24 @@ palette = 15=#e5e9f0
 
 # Window
 window-decoration = none
-window-padding-x = 10
-window-padding-y = 10
-background-opacity = 0.95
+window-padding-x = 18
+window-padding-y = 18
+background-opacity = 0.90
 background-blur-radius = 20
 
 # Cursor
 cursor-style = block
 cursor-style-blink = true
-cursor-color = 61afef
+cursor-color = f5e0dc
 
 # Behavior
 mouse-hide-while-typing = true
 macos-option-as-alt = true
-scrollback-limit = 10000
+scrollback-limit = 50000
 confirm-close-surface = false
 
 # Keybindings - tmux prefix Ctrl-b (\x02)
-keybind = super+1=text:\x02\x31
-keybind = super+2=text:\x02\x32
-keybind = super+3=text:\x02\x33
-keybind = super+4=text:\x02\x34
-keybind = super+5=text:\x02\x35
-keybind = super+6=text:\x02\x36
-keybind = super+7=text:\x02\x37
-keybind = super+8=text:\x02\x38
-keybind = super+9=text:\x02\x39
+# Use physical key names (digit_N) to override Ghostty 1.2+ default goto_tab bindings
 keybind = super+digit_1=text:\x02\x31
 keybind = super+digit_2=text:\x02\x32
 keybind = super+digit_3=text:\x02\x33
@@ -79,10 +72,11 @@ keybind = super+shift+left_bracket=text:\x02p
 keybind = super+shift+right_bracket=text:\x02n
 keybind = super+f=text:\x02/
 keybind = super+s=text:\x1b:w
+keybind = global:super+backquote=toggle_quick_terminal
 keybind = super+enter=toggle_fullscreen
 keybind = super+equal=increase_font_size:1
 keybind = super+minus=decrease_font_size:1
-keybind = super+0=reset_font_size
+keybind = super+digit_0=reset_font_size
 
 # Theme override (managed by gtheme script)
 config-file = ~/.config/ghostty/current-theme

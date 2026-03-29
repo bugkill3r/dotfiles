@@ -4,7 +4,6 @@
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-# Set name of the theme to load 
 ZSH_THEME="spaceship"
 
 # Spaceship theme configuration
@@ -88,6 +87,13 @@ plugins=(
 
 source $ZSH/oh-my-zsh.sh
 
+# History
+HISTSIZE=50000
+SAVEHIST=50000
+setopt HIST_IGNORE_ALL_DUPS
+setopt HIST_SAVE_NO_DUPS
+setopt SHARE_HISTORY
+
 # User configuration
 
 # export MANPATH="/usr/local/man:$MANPATH"
@@ -95,12 +101,7 @@ source $ZSH/oh-my-zsh.sh
 # You may need to manually set your language environment
 # export LANG=en_US.UTF-8
 
-# Preferred editor for local and remote sessions
-# if [[ -n $SSH_CONNECTION ]]; then
-#   export EDITOR='vim'
-# else
-#   export EDITOR='nvim'
-# fi
+export EDITOR='nvim'
 
 # Compilation flags
 # export ARCHFLAGS="-arch $(uname -m)"
@@ -117,30 +118,35 @@ alias twork="$HOME/Dev/dotfiles/tmux-work-setup.sh"
 alias tsave="$HOME/Dev/dotfiles/tmux-save.sh"
 alias cat='bat --paging=never'
 
-# Terminal color settings
-export TERM="xterm-256color"
+# OpenClaw
+alias oc-start="cd ~/openclaw-sandbox && docker compose up -d openclaw-gateway"
+alias oc-stop="cd ~/openclaw-sandbox && docker compose down"
+alias oc-restart="cd ~/openclaw-sandbox && docker compose restart openclaw-gateway"
+alias oc-status="cd ~/openclaw-sandbox && docker compose ps"
+alias oc-logs="docker logs -f openclaw-sandbox-openclaw-gateway-1"
 
 # Colors for syntax highlighting (must be set after zsh-syntax-highlighting is loaded)
+# Catppuccin Mocha syntax highlighting colors
 if [ -d "$ZSH_CUSTOM/plugins/zsh-syntax-highlighting" ]; then
   ZSH_HIGHLIGHT_STYLES[default]=none
-  ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=red
-  ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=yellow
-  ZSH_HIGHLIGHT_STYLES[alias]=fg=cyan
-  ZSH_HIGHLIGHT_STYLES[builtin]=fg=cyan
-  ZSH_HIGHLIGHT_STYLES[function]=fg=cyan
-  ZSH_HIGHLIGHT_STYLES[command]=fg=cyan
-  ZSH_HIGHLIGHT_STYLES[precommand]=fg=green
-  ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=blue
-  ZSH_HIGHLIGHT_STYLES[hashed-command]=fg=blue
-  ZSH_HIGHLIGHT_STYLES[path]=fg=blue
-  ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=blue
-  ZSH_HIGHLIGHT_STYLES[globbing]=fg=magenta
-  ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=yellow
-  ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=green
-  ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=green
-  ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=magenta
-  ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=magenta
-  ZSH_HIGHLIGHT_STYLES[assign]=fg=blue
+  ZSH_HIGHLIGHT_STYLES[unknown-token]=fg=#f38ba8
+  ZSH_HIGHLIGHT_STYLES[reserved-word]=fg=#cba6f7
+  ZSH_HIGHLIGHT_STYLES[alias]=fg=#89b4fa
+  ZSH_HIGHLIGHT_STYLES[builtin]=fg=#89b4fa
+  ZSH_HIGHLIGHT_STYLES[function]=fg=#89b4fa
+  ZSH_HIGHLIGHT_STYLES[command]=fg=#89b4fa
+  ZSH_HIGHLIGHT_STYLES[precommand]=fg=#a6e3a1,underline
+  ZSH_HIGHLIGHT_STYLES[commandseparator]=fg=#f5c2e7
+  ZSH_HIGHLIGHT_STYLES[hashed-command]=fg=#89b4fa
+  ZSH_HIGHLIGHT_STYLES[path]=fg=#94e2d5,underline
+  ZSH_HIGHLIGHT_STYLES[path_prefix]=fg=#94e2d5
+  ZSH_HIGHLIGHT_STYLES[globbing]=fg=#f5c2e7
+  ZSH_HIGHLIGHT_STYLES[history-expansion]=fg=#cba6f7
+  ZSH_HIGHLIGHT_STYLES[single-quoted-argument]=fg=#a6e3a1
+  ZSH_HIGHLIGHT_STYLES[double-quoted-argument]=fg=#a6e3a1
+  ZSH_HIGHLIGHT_STYLES[dollar-double-quoted-argument]=fg=#f5e0dc
+  ZSH_HIGHLIGHT_STYLES[back-double-quoted-argument]=fg=#f5e0dc
+  ZSH_HIGHLIGHT_STYLES[assign]=fg=#f9e2af
 fi
 
 # Show hidden files in auto-complete
@@ -155,43 +161,43 @@ function zshexit() {
   fi
 }
 
-eval "$(zoxide init zsh)"
+eval "$(zoxide init --cmd cd zsh)"
 
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_TMUX=1
 export FZF_TMUX_OPTS="-p 80%,60%"
 export FZF_DEFAULT_OPTS="
-  --color=bg+:#2e3440,bg:#000000,spinner:#81a1c1,hl:#616e88
-  --color=fg:#d8dee9,header:#616e88,info:#81a1c1,pointer:#bf616a
-  --color=marker:#a3be8c,fg+:#d8dee9,prompt:#81a1c1,hl+:#81a1c1
+  --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8
+  --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc
+  --color=marker:#a6e3a1,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8
   --border --height 60%"
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :80 {}' --preview-window=right:50%"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -40'"
 
-# nvm — lazy loaded for fast shell startup
+# nvm
 export NVM_DIR="$HOME/.nvm"
-_load_nvm() {
-  unset -f nvm node npm npx yarn
-  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
-  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
-}
-nvm()  { _load_nvm; nvm "$@"; }
-node() { _load_nvm; node "$@"; }
-npm()  { _load_nvm; npm "$@"; }
-npx()  { _load_nvm; npx "$@"; }
-yarn() { _load_nvm; yarn "$@"; }
+# Lazy-load nvm itself only in interactive shells (avoids breaking scripts/CI)
+if [[ $- == *i* ]]; then
+  _load_nvm() {
+    unset -f nvm node npm npx yarn _load_nvm
+    [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"
+    [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"
+  }
+  nvm()  { _load_nvm; nvm "$@"; }
+  node() { _load_nvm; node "$@"; }
+  npm()  { _load_nvm; npm "$@"; }
+  npx()  { _load_nvm; npx "$@"; }
+  yarn() { _load_nvm; yarn "$@"; }
+fi
 
 # Digital Billing Service Environment Variables
 export GOPRIVATE="github.com/razorpay/*"
 export GOPATH=$HOME/go
 export GOOSE_MIGRATION_DIR=internal/database/migrations
-export PATH="$HOME/Dev/dotfiles/bin:$PATH"
-export PATH=/usr/local/bin:$PATH
-export PATH=$GOPATH/bin:$PATH
 
-# Added by Antigravity
-export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
+# PATH
+export PATH="$NVM_DIR/versions/node/v22.22.0/bin:$HOME/Dev/dotfiles/bin:/usr/local/bin:$GOPATH/bin:$HOME/.antigravity/antigravity/bin:$PATH"
 
 # Google Cloud SDK completion
 [ -f /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc ] && source /opt/homebrew/share/google-cloud-sdk/completion.zsh.inc
@@ -199,13 +205,9 @@ export PATH="$HOME/.antigravity/antigravity/bin:$PATH"
 
 # Fix brew completion issues
 # Remove broken symlinks before compinit runs
-if [ -L "$(brew --prefix)/share/zsh/site-functions/_brew_services" ]; then
-  if [ ! -f "$(brew --prefix)/share/zsh/site-functions/_brew_services" ]; then
-    # Symlink is broken, remove it
-    rm -f "$(brew --prefix)/share/zsh/site-functions/_brew_services" 2>/dev/null || true
-  fi
+_brew_svc="/opt/homebrew/share/zsh/site-functions/_brew_services"
+if [ -L "$_brew_svc" ] && [ ! -f "$_brew_svc" ]; then
+  rm -f "$_brew_svc" 2>/dev/null || true
 fi
-# Configure compinit to ignore missing files (set before Oh My Zsh loads)
-# This is handled by Oh My Zsh, but we can ensure it's set
-autoload -Uz compinit
-compinit -u 2>/dev/null || true
+unset _brew_svc
+export PATH="$HOME/.local/bin:$PATH"

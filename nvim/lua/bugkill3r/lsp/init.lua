@@ -56,6 +56,8 @@ M.setup = function()
     },
     -- Whether servers that are set up (via lspconfig) should be automatically installed if they're not already installed
     automatic_installation = true,
+    -- Disable automatic_enable which requires Neovim 0.11+ (vim.lsp.enable)
+    automatic_enable = false,
   })
 
   -- Import other LSP modules

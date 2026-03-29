@@ -29,6 +29,8 @@ require("mason-lspconfig").setup({
         "ts_ls"
     },
     automatic_installation = true,
+    -- Disable automatic_enable which requires Neovim 0.11+ (vim.lsp.enable)
+    automatic_enable = false,
 })
 
 local lspconfig = require("lspconfig")
