@@ -152,14 +152,10 @@ fi
 # Show hidden files in auto-complete
 setopt globdots
 
-# Function to save tmux sessions when exiting the shell
-function zshexit() {
-  # Only run if tmux is active
-  if [ -n "$TMUX" ]; then
-    tmux run-shell ~/.tmux/plugins/tmux-resurrect/scripts/save.sh >/dev/null 2>&1
-    echo "Tmux sessions saved on exit!"
-  fi
-}
+# NOTE: previously a zshexit() hook saved tmux sessions on *every* shell exit,
+# which fired constantly (once per command/pane close) and was slow. Removed —
+# tmux-continuum's timer + the client-detached hook handle persistence now.
+# Use `tsave` to save manually anytime.
 
 eval "$(zoxide init --cmd cd zsh)"
 

@@ -38,6 +38,16 @@ persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
 key-mapping.preset = 'qwerty'
 
 # ─────────────────────────────────────────────────────────────
+# Monitor assignment — Chrome's workspace (3) lives on the external
+# monitor when one is connected; falls back to built-in when it's the
+# only display. Assumes built-in stays the macOS primary/main display.
+# If you make the external your primary instead, change 'secondary' to
+# a name match like '^lg' (case-insensitive substring regex).
+# ─────────────────────────────────────────────────────────────
+[workspace-to-monitor-force-assignment]
+3 = 'secondary'
+
+# ─────────────────────────────────────────────────────────────
 # Dedicated spaces — apps auto-move to their workspace on launch
 #   1: Cursor   2: Obsidian   3: Chrome   4: Ghostty
 #   5: Claude   6: Safari     7: zoom
