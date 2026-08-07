@@ -1,8 +1,21 @@
-# Font
+# Font — try candidates: uncomment ONE family, then reload Ghostty (⌘⇧,)
 font-family = CaskaydiaCove Nerd Font Mono
+# font-family = Maple Mono NF                  (too thin)
+# font-family = JetBrainsMono Nerd Font Mono   (too common)
+# active = MonaspiceXe NF (Monaspace Xenon — slab serif)
+# font-family = MonaspiceXe NF
+# font-family = MonaspiceAr NF                 (Monaspace Argon — humanist/warm)
+# font-family = MonaspiceNe NF                 (Monaspace Neon — neo-grotesque)
+# font-family = CommitMono Nerd Font
+# font-family = Hack Nerd Font Mono            (no ligatures, chunky)
+# --- distinctive picks ---
+# font-family = RecMonoCasual Nerd Font Mono   (Recursive Casual — playful)
+# font-family = 0xProto Nerd Font Mono         (coding-designed, uncommon)
+# font-family = BlexMono Nerd Font Mono        (IBM Plex Mono — humanist)
+# font-family = VictorMono Nerd Font Mono      (cursive italics; use Medium)
 font-size = 13
+# ligatures (== -> => != >= etc.); italic face is auto-selected
 font-feature = +calt
-font-feature = +ss01
 
 # Theme - Nord base with pure black background
 background = 000000
@@ -33,7 +46,20 @@ window-decoration = none
 window-padding-x = 18
 window-padding-y = 18
 background-opacity = 0.90
-background-blur-radius = 20
+background-blur = 40
+alpha-blending = linear-corrected
+
+# Rendering / quality-of-life
+font-thicken = true
+window-save-state = always
+resize-overlay = never
+window-colorspace = display-p3
+
+# Appearance
+adjust-cell-height = 8%
+bold-color = bright
+window-padding-balance = true
+macos-icon = glass
 
 # Cursor
 cursor-style = block
@@ -80,3 +106,6 @@ keybind = super+digit_0=reset_font_size
 
 # Theme override (managed by gtheme script)
 config-file = ~/.config/ghostty/current-theme
+
+# All-dark override — loaded AFTER the theme so pure-black wins
+config-file = ~/Dev/dotfiles/ghostty/all-dark

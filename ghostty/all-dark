@@ -1,0 +1,4 @@
+# Loaded AFTER the gtheme theme include so it always wins.
+# Pure-black (OLED) background over Catppuccin Mocha's #1e1e2e.
+# Opacity + blur (set in the main config) show through as a frosted black.
+background = #000000

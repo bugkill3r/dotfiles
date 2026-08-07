@@ -78,6 +78,7 @@ COMPLETION_WAITING_DOTS="true"
 # Add wisely, as too many plugins slow down shell startup.
 plugins=(
   git
+  fzf-tab
   zsh-autosuggestions
   zsh-syntax-highlighting
   history
@@ -86,6 +87,13 @@ plugins=(
 )
 
 source $ZSH/oh-my-zsh.sh
+
+# fzf-tab: fuzzy completion menu with previews (loaded via omz plugin above)
+zstyle ':completion:*' menu no                       # let fzf-tab take over
+zstyle ':fzf-tab:*' fzf-flags --height=60% --border
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'eza -1 --color=always --icons "$realpath"'
+zstyle ':fzf-tab:complete:*:*' fzf-preview \
+  'bat --color=always --line-range :80 "$realpath" 2>/dev/null || eza -1 --color=always --icons "$realpath" 2>/dev/null'
 
 # History
 HISTSIZE=50000
@@ -158,6 +166,15 @@ setopt globdots
 # Use `tsave` to save manually anytime.
 
 eval "$(zoxide init --cmd cd zsh)"
+
+# yazi: `y` opens the file manager and cd's to wherever you quit
+function y() {
+  local tmp="$(mktemp -t "yazi-cwd.XXXXXX")" cwd
+  yazi "$@" --cwd-file="$tmp"
+  IFS= read -r -d '' cwd < "$tmp"
+  [ -n "$cwd" ] && [ "$cwd" != "$PWD" ] && builtin cd -- "$cwd"
+  rm -f -- "$tmp"
+}
 
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh

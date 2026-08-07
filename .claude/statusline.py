@@ -16,23 +16,45 @@ import os
 import subprocess
 import sys
 
-# ── catppuccin mocha palette (matches btop + aitop "catppuccin" theme) ──────
+# ── theme-aware palette: read Ghostty's active theme so colors follow it ────
+import re as _re
+
 def fg(r, g, b):
     return f"\x1b[38;2;{r};{g};{b}m"
 
+def _read_palette():
+    # fallback: catppuccin mocha ANSI (used if the theme file can't be read)
+    pal = {0:(69,71,90), 1:(243,139,168), 2:(166,227,161), 3:(249,226,175),
+           4:(137,180,250), 5:(203,166,247), 6:(148,226,213), 7:(205,214,244),
+           8:(108,112,134)}
+    try:
+        with open(os.path.expanduser("~/.config/ghostty/current-theme")) as f:
+            for line in f:
+                m = _re.match(r'\s*palette\s*=\s*(\d+)\s*=\s*#?([0-9a-fA-F]{6})', line)
+                if m:
+                    n, h = int(m.group(1)), m.group(2)
+                    pal[n] = (int(h[0:2],16), int(h[2:4],16), int(h[4:6],16))
+    except Exception:
+        pass
+    return pal
+
+_PAL = _read_palette()
+def _c(n):
+    return fg(*_PAL[n])
+
 RESET   = "\x1b[0m"
 BOLD    = "\x1b[1m"
-TEXT    = fg(205, 214, 244)   # text
-SUBTEXT = fg(166, 173, 200)   # subtext0
-DIM     = fg(108, 112, 134)   # overlay0 — separators / muted labels
-PINK    = fg(245, 194, 231)   # git branch
-MAUVE   = fg(203, 166, 247)   # model / accent
-BLUE    = fg(137, 180, 250)   # directory
-TEAL    = fg(148, 226, 213)   # context icon
-GREEN   = fg(166, 227, 161)
-YELLOW  = fg(249, 226, 175)
-PEACH   = fg(250, 179, 135)
-RED     = fg(243, 139, 168)
+TEXT    = _c(7)   # foreground
+SUBTEXT = _c(7)
+DIM     = _c(8)   # separators / muted labels
+PINK    = _c(5)   # git branch (magenta)
+MAUVE   = _c(5)   # model / accent (magenta)
+BLUE    = _c(4)   # directory (blue)
+TEAL    = _c(6)   # context icon (cyan)
+GREEN   = _c(2)
+YELLOW  = _c(3)
+PEACH   = _c(3)
+RED     = _c(1)
 
 # ── nerd-font glyphs (CaskaydiaCove Nerd Font). Easy to swap. ───────────────
 IC_MODEL  = ""   # bolt
@@ -40,18 +62,18 @@ IC_DIR    = ""   # folder
 IC_BRANCH = ""   # git branch (powerline)
 IC_CTX    = ""   # bar chart
 IC_CLEAN  = ""   # check
-SEP       = f" {DIM}│{RESET} "
+SEP       = f" {DIM}{RESET} "
 SPARK_CELLS = 16          # braille sparkline width in chars (2 samples per cell)
 
 # ── aitop cost gradient (src/ui/widgets/cost_color.rs) ──────────────────────
 def cost_color(amount):
     if amount < 1.0:
-        return fg(80, 200, 80)      # dim green
+        return _c(2)                # green
     if amount < 5.0:
-        return fg(230, 220, 50)     # yellow
+        return _c(3)                # yellow
     if amount < 10.0:
-        return fg(255, 150, 50)     # orange
-    return fg(255, 80, 80)          # bright red
+        return _c(1)                # orange→red
+    return BOLD + _c(1)             # bright red
 
 # ── context fill → gradient color ───────────────────────────────────────────
 def ctx_color(frac):
@@ -68,7 +90,7 @@ def ctx_color(frac):
 # organic per-cell height variation, gradient green→yellow→red scaled by fill.
 _HEIGHTS = ["⣀", "⣤", "⣶", "⣿"]   # ⣀ ⣤ ⣶ ⣿ (1→4 rows)
 _WAVE = [0, -1, 0, 1, 0, 0, -1, 1, 0, -1, 0, 1, 0]
-_GRAD = [(166, 227, 161), (249, 226, 175), (243, 139, 168)]  # green, yellow, red
+_GRAD = [_PAL[2], _PAL[3], _PAL[1]]  # green, yellow, red (from active theme)
 
 def _lerp(c1, c2, t):
     return tuple(round(a + (b - a) * t) for a, b in zip(c1, c2))
