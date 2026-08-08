@@ -37,8 +37,11 @@ export MAGENTA=0xff${c_mauve}
 export GREY=0xff${c_grey}
 export TRANSPARENT=0x00000000
 
-# Bar + surfaces (alpha baked in: bar ~25% frosted — see-through but still visible)
-export BAR_COLOR=0x40${c_base}
+# Bar tint — opacity 0–100 (via `baropacity`) → alpha hex; frost/clear via `barblur`.
+BAR_PCT="$(cat "$HOME/.config/sketchybar-opacity" 2>/dev/null || echo 60)"
+case "$BAR_PCT" in ''|*[!0-9]*) BAR_PCT=60 ;; esac
+[ "$BAR_PCT" -gt 100 ] 2>/dev/null && BAR_PCT=100
+export BAR_COLOR=0x$(printf '%02x' $(( BAR_PCT * 255 / 100 )))${c_base}
 export BAR_BORDER_COLOR=0xff${c_surface1}
 export ICON_COLOR=$WHITE
 export LABEL_COLOR=$WHITE

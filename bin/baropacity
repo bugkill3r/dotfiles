@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+# Set the sketchybar bar/island tint opacity (0–100%).
+#   baropacity 60
+set -euo pipefail
+
+v="${1:-}"
+case "$v" in
+  ''|*[!0-9]*) echo "usage: baropacity <0-100>"; exit 1 ;;
+esac
+[ "$v" -gt 100 ] && v=100
+
+printf '%s\n' "$v" > "$HOME/.config/sketchybar-opacity"
+launchctl kickstart -k "gui/$(id -u)/homebrew.mxcl.sketchybar" 2>/dev/null || true
+echo "sketchybar opacity → ${v}%"

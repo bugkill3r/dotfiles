@@ -18,6 +18,7 @@ git clone https://github.com/bugkill3r/dotfiles ~/Dev/dotfiles
 cd ~/Dev/dotfiles
 ./install.sh            # interactive: pick components + style
 ./install.sh --all      # everything, non-interactively
+./install.sh --dry-run  # preview every action, change nothing (pairs with --all)
 ./install.sh --help
 ```
 
@@ -57,12 +58,18 @@ theme                 # fzf picker with live preview
 theme macchiato       # or: mocha | frappe | latte
 ```
 
-Switch the **menu-bar layout**:
+Tune the **menu bar** — all live, no restart:
 
 ```sh
-barstyle              # toggle
-barstyle slab         # one frosted slab (notch overlaps its center)
-barstyle islands      # two frosted bars flanking the notch
+barstyle              # toggle layout
+barstyle slab         # one floating frosted bar
+barstyle islands      # two bars flanking the notch
+
+barblur               # toggle frost
+barblur frost         # frosted glass (blur)
+barblur clear         # clear transparency (no blur)
+
+baropacity 60         # bar tint opacity, 0–100
 ```
 
 ## AeroSpace keys (`alt` = modifier)

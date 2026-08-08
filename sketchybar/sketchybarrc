@@ -15,27 +15,30 @@ killall helper 2>/dev/null
 # Unload the macOS on screen indicator overlay for volume change
 launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist > /dev/null 2>&1 &
 
-# ═══ LAYOUT VIEW ═══ switch with `barstyle islands|slab` (see bin/barstyle).
+# ═══ LAYOUT VIEW ═══ switch with `barstyle slab|islands` (see bin/barstyle).
+#   slab    = one floating frosted bar (single translucent layer)
 #   islands = two frosted bars flanking the notch (clean gap in the center)
-#   slab    = one frosted bar in the menu-bar strip; the physical notch cuts
-#             into its center (a real notch cutout on the built-in display)
+# Appearance: `barblur` (frost/clear) and `baropacity` (0-100) both read from
+# ~/.config, applied below via $BLUR and BAR_COLOR (see colors.sh).
 BAR_STYLE="$(cat "$HOME/.config/sketchybar-style" 2>/dev/null || echo islands)"
+# Blur radius — frost (30) vs clear transparency (0). Toggle with `barblur`.
+BLUR="$(cat "$HOME/.config/sketchybar-blur" 2>/dev/null || echo 30)"
 
 # Setting up the general bar appearance of the bar
 if [ "$BAR_STYLE" = "slab" ]; then
   bar=(
-    height=38             # sits in the menu-bar strip; notch overlaps its center
-    color=$BAR_COLOR      # one continuous frosted slab (follows the flavor)
-    blur_radius=30        # bar-wide blur
+    height=38             # one floating frosted bar (single layer, no pill fills)
+    color=$BAR_COLOR      # one continuous translucent slab (follows the flavor)
+    blur_radius=$BLUR     # frost (30) or clear (0) — set via `barblur`
     border_width=0
     border_color=$BAR_BORDER_COLOR
-    corner_radius=12
+    corner_radius=20      # stadium ends
     shadow=off
     position=top
     sticky=on
     padding_right=10
     padding_left=10
-    y_offset=0            # flush to the top so the notch bites its center
+    y_offset=2            # dropped a touch + inset (margin) → it floats
     margin=12
     notch_width=200       # keep center items (media) clear of the notch
     topmost=window
@@ -141,7 +144,7 @@ if [ "$BAR_STYLE" = "slab" ]; then
 else
   # ISLANDS: two frosted bars flanking the notch. Each carries its own blur
   # (item-level blur_radius) so the frosted look survives with a clean gap.
-  ISLAND=(background.color=$BAR_COLOR blur_radius=30 background.border_width=0 \
+  ISLAND=(background.color=$BAR_COLOR blur_radius=$BLUR background.border_width=0 \
           background.corner_radius=17 background.height=34)
   sketchybar --add bracket left_island apple.logo '/space\..*/' front_app \
              --set left_island "${ISLAND[@]}"

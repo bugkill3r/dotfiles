@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Switch the sketchybar layout between the two saved views.
+#   barstyle slab      → one floating frosted bar
 #   barstyle islands   → two frosted bars flanking the notch (clean gap)
-#   barstyle slab      → one frosted slab; the physical notch cuts its center
 #   barstyle           → toggle between them
 set -euo pipefail
 

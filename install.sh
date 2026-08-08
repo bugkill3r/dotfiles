@@ -38,16 +38,21 @@ if [ -z "$DOT" ] || [ ! -f "$DOT/Brewfile" ]; then
   exec bash "$DOT/install.sh" "$@"
 fi
 
+# ── dry-run plumbing ─────────────────────────────────────────────────────────
+DRY=0                                    # --dry-run: print actions, change nothing
+run() { if [ "$DRY" = 1 ]; then printf '  %s[dry]%s %s\n' "$DIM" "$R" "$*"; else "$@"; fi; }
+
 # ── symlink helper (backs up existing real files) ────────────────────────────
 link() {
   local src="$1" dst="$2"
   [ -e "$src" ] || { warn "missing in repo: $src (skipped)"; return 0; }
+  if [ "$DRY" = 1 ]; then printf '  %s[dry]%s link %s\n' "$DIM" "$R" "$(printf '%s' "$dst" | sed "s|$HOME|~|")"; return 0; fi
   mkdir -p "$(dirname "$dst")"
   if [ -e "$dst" ] && [ ! -L "$dst" ]; then mv "$dst" "$dst.bak"; say "  backed up $dst → $dst.bak"; fi
   ln -sfn "$src" "$dst" && ok "$(printf '%s' "$dst" | sed "s|$HOME|~|")"
 }
-brew_f() { brew install "$@" || warn "some of: $* may have failed — continuing"; }
-brew_c() { brew install --cask "$@" || warn "some casks: $* may have failed — continuing"; }
+brew_f() { [ "$DRY" = 1 ] && { printf '  %s[dry]%s brew install %s\n' "$DIM" "$R" "$*"; return 0; }; brew install "$@" || warn "some of: $* may have failed — continuing"; }
+brew_c() { [ "$DRY" = 1 ] && { printf '  %s[dry]%s brew install --cask %s\n' "$DIM" "$R" "$*"; return 0; }; brew install --cask "$@" || warn "some casks: $* may have failed — continuing"; }
 
 # ── component catalog:  key|label|default ────────────────────────────────────
 COMPS=(
@@ -110,15 +115,19 @@ i_core() {
   brew_f bat eza fd ripgrep fzf zoxide jq gh lazygit tree btop tmux sesh fastfetch
   link "$DOT/tmux/.tmux.conf" "$HOME/.tmux.conf"
   link "$DOT/btop"            "$HOME/.config/btop"
-  [ -d "$HOME/.tmux/plugins/tpm" ] || git clone -q https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm" && ok "tmux + tpm"
+  [ -d "$HOME/.tmux/plugins/tpm" ] || run git clone -q https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
+  ok "tmux + tpm"
 }
 i_shell() {
   step "Zsh (oh-my-zsh + Starship)"
   brew_f starship
-  [ -d "$HOME/.oh-my-zsh" ] || RUNZSH=no CHSH=no sh -c \
-    "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" >/dev/null 2>&1 || true
+  if [ ! -d "$HOME/.oh-my-zsh" ]; then
+    if [ "$DRY" = 1 ]; then run "install oh-my-zsh"; else
+      RUNZSH=no CHSH=no sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" >/dev/null 2>&1 || true
+    fi
+  fi
   local zc="${ZSH_CUSTOM:-$HOME/.oh-my-zsh/custom}"
-  [ -d "$zc/plugins/fzf-tab" ] || git clone -q https://github.com/Aloxaf/fzf-tab "$zc/plugins/fzf-tab" 2>/dev/null || true
+  [ -d "$zc/plugins/fzf-tab" ] || run git clone -q https://github.com/Aloxaf/fzf-tab "$zc/plugins/fzf-tab"
   link "$DOT/.zshrc"                "$HOME/.zshrc"
   link "$DOT/.config/starship.toml" "$HOME/.config/starship.toml"
 }
@@ -130,20 +139,22 @@ i_wm() {
   brew_f felixkratz/formulae/borders
   link "$DOT/aerospace/aerospace.toml"  "$HOME/.aerospace.toml"
   link "$DOT/.config/borders/bordersrc" "$HOME/.config/borders/bordersrc"
-  brew services start borders 2>/dev/null || true
-  open -a AeroSpace 2>/dev/null || true
+  run brew services start borders
+  run open -a AeroSpace
 }
 i_bar() {
   step "Sketchybar"
   brew_f felixkratz/formulae/sketchybar macmon
   link "$DOT/sketchybar" "$HOME/.config/sketchybar"
   if ! fc-list 2>/dev/null | grep -qi 'sketchybar-app'; then
-    mkdir -p "$HOME/Library/Fonts"
-    curl -fsSL -o "$HOME/Library/Fonts/sketchybar-app-font.ttf" \
-      "https://github.com/kvndrsslr/sketchybar-app-font/releases/latest/download/sketchybar-app-font.ttf" \
-      && ok "sketchybar-app-font" || warn "could not fetch sketchybar-app-font"
+    if [ "$DRY" = 1 ]; then run "fetch sketchybar-app-font.ttf → ~/Library/Fonts"; else
+      mkdir -p "$HOME/Library/Fonts"
+      curl -fsSL -o "$HOME/Library/Fonts/sketchybar-app-font.ttf" \
+        "https://github.com/kvndrsslr/sketchybar-app-font/releases/latest/download/sketchybar-app-font.ttf" \
+        && ok "sketchybar-app-font" || warn "could not fetch sketchybar-app-font"
+    fi
   fi
-  brew services start sketchybar 2>/dev/null || true
+  run brew services start sketchybar
 }
 i_fonts() {
   step "Fonts"
@@ -151,18 +162,22 @@ i_fonts() {
          font-maple-mono-nf font-symbols-only-nerd-font
 }
 i_theming() {
-  step "Theme scripts → ~/.local/bin"
-  mkdir -p "$HOME/.local/bin"
-  for s in theme barstyle gtheme tmux-window-gradient.py; do
+  step "Bar/theme scripts → ~/.local/bin"
+  [ "$DRY" = 1 ] || mkdir -p "$HOME/.local/bin"
+  for s in theme barstyle barblur baropacity gtheme tmux-window-gradient.py; do
     link "$DOT/bin/$s" "$HOME/.local/bin/$s"
   done
   link "$DOT/.claude/statusline.py" "$HOME/.claude/statusline.py"
 }
-i_macos() { step "macOS defaults"; bash "$DOT/macos.sh" || true; }
+i_macos() { step "macOS defaults"; run bash "$DOT/macos.sh"; }
 i_apps()  { step "GUI apps"; brew_c raycast orbstack tailscale-app swish; }
 
 apply_style() {
   step "Style → $FLAVOR / $BARSTYLE"
+  if [ "$DRY" = 1 ]; then
+    run "write ~/.config/sketchybar-style=$BARSTYLE, catppuccin-flavor=$FLAVOR"
+    run "theme $FLAVOR"; return 0
+  fi
   mkdir -p "$HOME/.config"
   printf '%s\n' "$BARSTYLE" > "$HOME/.config/sketchybar-style"
   printf '%s\n' "$FLAVOR"   > "$HOME/.config/catppuccin-flavor"
@@ -170,18 +185,28 @@ apply_style() {
 }
 
 # ── main ─────────────────────────────────────────────────────────────────────
-case "${1:-}" in
-  -h|--help) sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
-esac
+ALL=0
+for a in "$@"; do
+  case "$a" in
+    -h|--help)    sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    --all)        ALL=1 ;;
+    -n|--dry-run) DRY=1 ;;
+    *) say "unknown option: $a  (try --help)"; exit 1 ;;
+  esac
+done
+[ "$DRY" = 1 ] && step "DRY RUN — printing actions, nothing will be installed or changed"
 
 step "Homebrew"
 if ! have brew; then
-  /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
-  [ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+  if [ "$DRY" = 1 ]; then run "install Homebrew"; else
+    /bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+    [ -x /opt/homebrew/bin/brew ] && eval "$(/opt/homebrew/bin/brew shellenv)"
+  fi
 fi
-have brew && ok "brew $(brew --version 2>/dev/null | head -1 | awk '{print $2}')" || { say "${RED}Homebrew required${R}"; exit 1; }
+if have brew; then ok "brew $(brew --version 2>/dev/null | head -1 | awk '{print $2}')"
+elif [ "$DRY" != 1 ]; then say "${RED}Homebrew required${R}"; exit 1; fi
 
-if [ "${1:-}" = "--all" ]; then
+if [ "$ALL" = 1 ]; then
   SELECTED=""; for e in "${COMPS[@]}"; do IFS='|' read -r k l d <<<"$e"; SELECTED="$SELECTED $k"; done
 else
   pick_components
@@ -195,7 +220,7 @@ if is_sel bar; then
 fi
 
 printf '\n%sPlan%s: %s%s%s   style: %s%s / %s%s\n' "$B" "$R" "$GRN" "$(echo $SELECTED)" "$R" "$B" "$FLAVOR" "$BARSTYLE" "$R"
-[ "${1:-}" = "--all" ] || { c="$(ask "Proceed? [Y/n] > ")"; case "$c" in n|N) echo "Aborted."; exit 0 ;; esac; }
+[ "$ALL" = 1 ] || { c="$(ask "Proceed? [Y/n] > ")"; case "$c" in n|N) echo "Aborted."; exit 0 ;; esac; }
 
 is_sel core     && i_core
 is_sel fonts    && i_fonts

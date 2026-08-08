@@ -1,0 +1,22 @@
+#!/usr/bin/env bash
+# Toggle / set the sketchybar background blur — frosted glass vs clear transparency.
+#   barblur frost      → blurred (frosted) glass
+#   barblur clear      → no blur (clear transparency)
+#   barblur <radius>   → explicit blur radius
+#   barblur            → toggle frost/clear
+set -euo pipefail
+
+FILE="$HOME/.config/sketchybar-blur"
+cur="$(cat "$FILE" 2>/dev/null || echo 30)"
+
+case "${1:-toggle}" in
+  frost)  new=30 ;;
+  clear)  new=0 ;;
+  toggle) [ "$cur" = 0 ] && new=30 || new=0 ;;
+  ''|*[!0-9]*) echo "usage: barblur [frost|clear|<radius>]   (no arg = toggle)"; exit 1 ;;
+  *) new="$1" ;;
+esac
+
+printf '%s\n' "$new" > "$FILE"
+launchctl kickstart -k "gui/$(id -u)/homebrew.mxcl.sketchybar" 2>/dev/null || true
+echo "sketchybar blur → $new  ($([ "$new" = 0 ] && echo clear || echo frosted))"
