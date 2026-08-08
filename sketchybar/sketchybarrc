@@ -15,22 +15,50 @@ killall helper 2>/dev/null
 # Unload the macOS on screen indicator overlay for volume change
 launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist > /dev/null 2>&1 &
 
+# ═══ LAYOUT VIEW ═══ switch with `barstyle islands|slab` (see bin/barstyle).
+#   islands = two frosted bars flanking the notch (clean gap in the center)
+#   slab    = one frosted bar in the menu-bar strip; the physical notch cuts
+#             into its center (a real notch cutout on the built-in display)
+BAR_STYLE="$(cat "$HOME/.config/sketchybar-style" 2>/dev/null || echo islands)"
+
 # Setting up the general bar appearance of the bar
-bar=(
-  height=45
-  color=0x801e1e2e      # ~50% opacity — more see-through frosted glass
-  blur_radius=30        # background blur behind the bar
-  border_width=2
-  border_color=$BAR_BORDER_COLOR
-  shadow=off
-  position=top
-  sticky=on
-  padding_right=10
-  padding_left=10
-  y_offset=-5
-  margin=-2
-  topmost=window
-)
+if [ "$BAR_STYLE" = "slab" ]; then
+  bar=(
+    height=38             # sits in the menu-bar strip; notch overlaps its center
+    color=$BAR_COLOR      # one continuous frosted slab (follows the flavor)
+    blur_radius=30        # bar-wide blur
+    border_width=0
+    border_color=$BAR_BORDER_COLOR
+    corner_radius=12
+    shadow=on
+    position=top
+    sticky=on
+    padding_right=10
+    padding_left=10
+    y_offset=0            # flush to the top so the notch bites its center
+    margin=12
+    notch_width=200       # keep center items (media) clear of the notch
+    topmost=window
+  )
+else
+  bar=(
+    height=40
+    color=$TRANSPARENT    # invisible bar — the two islands are the visuals
+    blur_radius=0         # bar-wide blur off so the notch gap stays clean
+    border_width=0
+    border_color=$BAR_BORDER_COLOR
+    corner_radius=0
+    shadow=off
+    position=top
+    sticky=on
+    padding_right=10
+    padding_left=10
+    y_offset=2
+    margin=12
+    notch_width=200
+    topmost=window
+  )
+fi
 
 sketchybar --bar "${bar[@]}"
 
@@ -104,36 +132,30 @@ sketchybar --set wifi          icon.color=$WHITE   \
            --set weather       icon.color=$WHITE   \
            --set calendar      icon.color=$MAGENTA label.color=$MAGENTA
 
-# --- one coherent "system tray" around connectivity + power (contiguous, so
-# no stray item gets visually swallowed like the old overlapping brackets) ---
-sketchybar --add bracket sys_tray \
-             wifi tailscale network_down network_up volume volume_icon battery \
-           --set sys_tray background.color=$BACKGROUND_1 \
-                          background.border_width=0 \
-                          background.corner_radius=9 \
-                          background.height=26
-
-# additional pill clusters so nothing is left "hanging" between the tray and
-# the clock: vitals (temp/power), info (notifications + brew), ambient
-# (weather + the mauve clock anchor). Same flat frosted-glass style.
-GLASS=(background.color=$BACKGROUND_1 background.border_width=0 background.corner_radius=9 background.height=26)
-sketchybar --add bracket vitals  macmon            --set vitals  "${GLASS[@]}"
-sketchybar --add bracket info    github.bell brew  --set info    "${GLASS[@]}"
-sketchybar --add bracket ambient weather calendar  --set ambient "${GLASS[@]}"
-
-# Left-side pills, same glass: the Apple button and the focused-app module.
-sketchybar --add bracket apple_pill apple.logo --set apple_pill "${GLASS[@]}"
-sketchybar --add bracket app_pill   front_app  --set app_pill   "${GLASS[@]}"
-
-# no drop shadows — they cast an offset second outline that double-edges the
-# frosted glass; keep the panels flat so each has a single clean edge
-sketchybar --set workspaces background.shadow.drawing=off \
-           --set sys_tray   background.shadow.drawing=off \
-           --set vitals     background.shadow.drawing=off \
-           --set info       background.shadow.drawing=off \
-           --set ambient    background.shadow.drawing=off \
-           --set apple_pill background.shadow.drawing=off \
-           --set app_pill   background.shadow.drawing=off
+# ═══ LAYOUT BRACKETS ═══ depend on BAR_STYLE (set in the bar block above).
+if [ "$BAR_STYLE" = "slab" ]; then
+  # SLAB: the bar itself is the frosted slab; each cluster wears a small pill.
+  GLASS=(background.color=$BACKGROUND_1 background.border_width=0 background.corner_radius=9 background.height=26)
+  sketchybar --add bracket workspaces '/space\..*/'  --set workspaces "${GLASS[@]}"
+  sketchybar --add bracket apple_pill apple.logo     --set apple_pill "${GLASS[@]}"
+  sketchybar --add bracket app_pill   front_app      --set app_pill   "${GLASS[@]}"
+  sketchybar --add bracket sys_tray wifi tailscale network_down network_up volume volume_icon battery \
+             --set sys_tray "${GLASS[@]}"
+  sketchybar --add bracket vitals  macmon            --set vitals  "${GLASS[@]}"
+  sketchybar --add bracket info    github.bell brew  --set info    "${GLASS[@]}"
+  sketchybar --add bracket ambient weather calendar  --set ambient "${GLASS[@]}"
+else
+  # ISLANDS: two frosted bars flanking the notch. Each carries its own blur
+  # (item-level blur_radius) so the frosted look survives with a clean gap.
+  ISLAND=(background.color=$BAR_COLOR blur_radius=30 background.border_width=0 \
+          background.corner_radius=17 background.height=34)
+  sketchybar --add bracket left_island apple.logo '/space\..*/' front_app \
+             --set left_island "${ISLAND[@]}"
+  sketchybar --add bracket right_island \
+               macmon wifi tailscale network_down network_up volume volume_icon \
+               battery github.bell brew weather calendar \
+             --set right_island "${ISLAND[@]}"
+fi
 
 sketchybar --hotload on
 

@@ -19,7 +19,7 @@ for sid in $(aerospace list-workspaces --all); do
       label.font="sketchybar-app-font:Regular:16.0" \
       label.padding_left=2 \
       label.padding_right=10 \
-      label.y_offset=-1 \
+      label.y_offset=0 \
       label.color=$GREY \
       label.drawing=off \
       background.color=$BACKGROUND_1 \
@@ -31,9 +31,8 @@ for sid in $(aerospace list-workspaces --all); do
       script="$PLUGIN_DIR/aerospace.sh $sid"
 done
 
-sketchybar --add bracket workspaces '/space\..*/' \
-           --set workspaces background.color=$BACKGROUND_1 \
-                            background.border_width=0
+# (workspaces bracket removed — spaces now live inside the left_island bracket
+# defined in sketchybarrc so we don't nest two backgrounds)
 
 # initial paint
 sketchybar --trigger aerospace_workspace_change \

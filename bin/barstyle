@@ -1,0 +1,19 @@
+#!/usr/bin/env bash
+# Switch the sketchybar layout between the two saved views.
+#   barstyle islands   → two frosted bars flanking the notch (clean gap)
+#   barstyle slab      → one frosted slab; the physical notch cuts its center
+#   barstyle           → toggle between them
+set -euo pipefail
+
+FILE="$HOME/.config/sketchybar-style"
+cur="$(cat "$FILE" 2>/dev/null || echo islands)"
+
+case "${1:-toggle}" in
+  islands|slab) new="$1" ;;
+  toggle) [ "$cur" = "islands" ] && new="slab" || new="islands" ;;
+  *) echo "usage: barstyle [islands|slab]   (no arg = toggle)"; exit 1 ;;
+esac
+
+printf '%s\n' "$new" > "$FILE"
+launchctl kickstart -k "gui/$(id -u)/homebrew.mxcl.sketchybar" 2>/dev/null || true
+echo "sketchybar → $new view"

@@ -43,6 +43,10 @@ export BAT_THEME="Catppuccin ${c}"
 export CATPPUCCIN_FLAVOR="${flavor}"
 EOF
   printf '%s\n' "$flavor" > "$HOME/.config/catppuccin-flavor"
+  # recolor the menu bar — sketchybar's colors.sh reads catppuccin-flavor at
+  # startup, so kick the service to re-read it (no tap-trust needed).
+  command -v sketchybar >/dev/null 2>&1 &&
+    launchctl kickstart -k "gui/$(id -u)/homebrew.mxcl.sketchybar" 2>/dev/null || true
 }
 
 # Internal: called by the picker's focus binding for live preview
@@ -69,5 +73,5 @@ case "$flavor" in
 esac
 
 apply_full "$flavor"
-echo "🎨 Catppuccin $(cap "$flavor") → ghostty · tmux · statusline · fzf · btop · yazi · bat · nvim · borders"
+echo "🎨 Catppuccin $(cap "$flavor") → ghostty · tmux · statusline · fzf · btop · yazi · bat · nvim · borders · sketchybar"
 echo "   (btop/yazi/nvim update on next launch; run 'exec zsh' for bat/env)"

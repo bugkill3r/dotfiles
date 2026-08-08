@@ -9,7 +9,7 @@ source "$CONFIG_DIR/colors.sh"
 case "$SENDER" in
   mouse.entered)
     [ "$SID" != "$(aerospace list-workspaces --focused 2>/dev/null)" ] && \
-      sketchybar --animate sin 8 --set space.$SID background.drawing=on background.color=0x30cad3f5
+      sketchybar --animate sin 8 --set space.$SID background.drawing=on background.color="0x30${WHITE#0xff}"
     exit 0
     ;;
 esac
@@ -33,7 +33,7 @@ fi
 focused="off"; label_color=$GREY; bg="off"; bg_color=$BACKGROUND_1; icon_color=$WHITE; bg_border=$BACKGROUND_2
 if [ "$SID" = "$FOCUSED_WORKSPACE" ]; then
   focused="on"; label_color=$WHITE; bg="on"
-  bg_color=0x66c6a0f6   # translucent mauve — glassy, lets the frosted bar/blur show through
+  bg_color="0x66${MAGENTA#0xff}"   # translucent mauve (themed) — glassy, lets the frosted bar/blur through
   icon_color=$WHITE
   bg_border=$MAGENTA    # crisp mauve edge so the active pill still reads clearly
 fi

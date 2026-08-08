@@ -9,10 +9,7 @@ FRONT_APP_SCRIPT='
   if [ "$SENDER" = "front_app_switched" ]; then
     source "$CONFIG_DIR/plugins/icon_map.sh" "$INFO"
     [ -z "$icon_result" ] && icon_result=":default:"
-    title=$(aerospace list-windows --focused --format "%{window-title}" 2>/dev/null | head -1)
-    label="$INFO"
-    [ -n "$title" ] && [ "$title" != "$INFO" ] && label="$INFO  ·  ${title:0:36}"
-    sketchybar --set $NAME icon="$icon_result" label="$label"
+    sketchybar --set $NAME icon="$icon_result" label="$INFO"
   fi
 '
 
