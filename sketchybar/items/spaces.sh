@@ -14,7 +14,7 @@ for sid in $(aerospace list-workspaces --all); do
       icon.padding_left=10 \
       icon.padding_right=4 \
       icon.color=$WHITE \
-      icon.highlight_color=$MAGENTA \
+      icon.highlight_color=$WHITE \
       icon.font="$FONT:Bold:14.0" \
       label.font="sketchybar-app-font:Regular:16.0" \
       label.padding_left=2 \
@@ -33,7 +33,7 @@ done
 
 sketchybar --add bracket workspaces '/space\..*/' \
            --set workspaces background.color=$BACKGROUND_1 \
-                            background.border_color=$BACKGROUND_2
+                            background.border_width=0
 
 # initial paint
 sketchybar --trigger aerospace_workspace_change \

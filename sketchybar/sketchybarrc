@@ -9,11 +9,8 @@ PLUGIN_DIR="$CONFIG_DIR/plugins" # Directory where all the plugin scripts are st
 FONT="SF Pro" # Using SF Pro for all text and icons
 PADDINGS=3 # All paddings use this value (icon, label, background)
 
-# Setting up and starting the helper process
-HELPER=git.felix.helper
-killall helper
-(cd $CONFIG_DIR/helper && make)
-$CONFIG_DIR/helper/helper $HELPER > /dev/null 2>&1 &
+# (CPU widget removed — its mach helper is no longer needed)
+killall helper 2>/dev/null
 
 # Unload the macOS on screen indicator overlay for volume change
 launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist > /dev/null 2>&1 &
@@ -21,7 +18,7 @@ launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist > /
 # Setting up the general bar appearance of the bar
 bar=(
   height=45
-  color=0xb31e1e2e      # ~70% opacity for a frosted look
+  color=0x801e1e2e      # ~50% opacity — more see-through frosted glass
   blur_radius=30        # background blur behind the bar
   border_width=2
   border_color=$BAR_BORDER_COLOR
@@ -63,9 +60,16 @@ defaults=(
 
 sketchybar --default "${defaults[@]}"
 
+# pill_gap inserts an invisible spacer BETWEEN clusters (not a bracket member)
+# so the frosted pills have breathing room instead of touching. $2 = left|right.
+pill_gap() { sketchybar --add item "spacer.$1" "${2:-right}" \
+                        --set "spacer.$1" width=8 icon.drawing=off label.drawing=off background.drawing=off; }
+
 # Left
 source "$ITEM_DIR/apple.sh"
+pill_gap L1 left                 # apple | workspaces
 source "$ITEM_DIR/spaces.sh"
+pill_gap L2 left                 # workspaces | front_app
 # source "$ITEM_DIR/yabai.sh"  # disabled: yabai removed (AeroSpace)
 source "$ITEM_DIR/front_app.sh"
 
@@ -73,41 +77,63 @@ source "$ITEM_DIR/front_app.sh"
 # source "$ITEM_DIR/spotify.sh"  # replaced by generic media
 source "$ITEM_DIR/media.sh"
 
-# Right
+# Right  (order = right-to-left; calendar sits at the far right as the anchor)
 source "$ITEM_DIR/calendar.sh"
 source "$ITEM_DIR/weather.sh"
+pill_gap 1                       # ambient | info
 source "$ITEM_DIR/brew.sh"
 source "$ITEM_DIR/github.sh"
-source "$ITEM_DIR/wifi.sh"
-source "$ITEM_DIR/tailscale.sh"
+pill_gap 2                       # info | sys_tray
 source "$ITEM_DIR/battery.sh"
 source "$ITEM_DIR/volume.sh"
 source "$ITEM_DIR/network.sh"
-source "$ITEM_DIR/cpu.sh"
+source "$ITEM_DIR/tailscale.sh"
+source "$ITEM_DIR/wifi.sh"
+pill_gap 3                       # sys_tray | vitals
 source "$ITEM_DIR/macmon.sh"
 source "$ITEM_DIR/bluetooth.sh"
 
-# --- polish: color-code right-side icons (catppuccin accents) ---
-sketchybar --set wifi          icon.color=$BLUE    \
-           --set volume_icon   icon.color=$GREEN   \
-           --set network_up    icon.color=$BLUE    \
-           --set network_down  icon.color=$MAGENTA \
-           --set calendar      icon.color=$MAGENTA \
-           --set cpu.percent   icon.color=$YELLOW  \
-           --set brew          icon.color=$YELLOW
+# --- restrained palette: keep the tray monochrome so the only accents are
+# MEANINGFUL state (battery level, tailscale up/down, brew updates, unread
+# notifications — all set by their own plugins). The mauve clock anchors the
+# far right. This is what creates hierarchy: color = "look here". ---
+sketchybar --set wifi          icon.color=$WHITE   \
+           --set volume_icon   icon.color=$WHITE   \
+           --set network_up    icon.color=$GREY    \
+           --set network_down  icon.color=$GREY    \
+           --set weather       icon.color=$WHITE   \
+           --set calendar      icon.color=$MAGENTA label.color=$MAGENTA
 
-# --- group the right-side status items in a subtle rounded bracket ---
-sketchybar --add bracket status_group \
-             cpu.percent cpu.sys cpu.user network_up network_down \
-             volume volume_icon battery wifi \
-           --set status_group background.color=$BACKGROUND_1 \
-                              background.border_color=$BACKGROUND_2 \
-                              background.corner_radius=9 \
-                              background.height=26
+# --- one coherent "system tray" around connectivity + power (contiguous, so
+# no stray item gets visually swallowed like the old overlapping brackets) ---
+sketchybar --add bracket sys_tray \
+             wifi tailscale network_down network_up volume volume_icon battery \
+           --set sys_tray background.color=$BACKGROUND_1 \
+                          background.border_width=0 \
+                          background.corner_radius=9 \
+                          background.height=26
 
-# subtle shadows for depth
-sketchybar --set workspaces background.shadow.drawing=on background.shadow.color=$SHADOW_COLOR background.shadow.distance=4 background.shadow.angle=-90 \
-           --set status_group background.shadow.drawing=on background.shadow.color=$SHADOW_COLOR background.shadow.distance=4 background.shadow.angle=-90
+# additional pill clusters so nothing is left "hanging" between the tray and
+# the clock: vitals (temp/power), info (notifications + brew), ambient
+# (weather + the mauve clock anchor). Same flat frosted-glass style.
+GLASS=(background.color=$BACKGROUND_1 background.border_width=0 background.corner_radius=9 background.height=26)
+sketchybar --add bracket vitals  macmon            --set vitals  "${GLASS[@]}"
+sketchybar --add bracket info    github.bell brew  --set info    "${GLASS[@]}"
+sketchybar --add bracket ambient weather calendar  --set ambient "${GLASS[@]}"
+
+# Left-side pills, same glass: the Apple button and the focused-app module.
+sketchybar --add bracket apple_pill apple.logo --set apple_pill "${GLASS[@]}"
+sketchybar --add bracket app_pill   front_app  --set app_pill   "${GLASS[@]}"
+
+# no drop shadows — they cast an offset second outline that double-edges the
+# frosted glass; keep the panels flat so each has a single clean edge
+sketchybar --set workspaces background.shadow.drawing=off \
+           --set sys_tray   background.shadow.drawing=off \
+           --set vitals     background.shadow.drawing=off \
+           --set info       background.shadow.drawing=off \
+           --set ambient    background.shadow.drawing=off \
+           --set apple_pill background.shadow.drawing=off \
+           --set app_pill   background.shadow.drawing=off
 
 sketchybar --hotload on
 

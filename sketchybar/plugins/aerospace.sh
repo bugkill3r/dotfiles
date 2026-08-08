@@ -30,18 +30,20 @@ if [ -n "$apps" ]; then
   done <<< "$apps"
 fi
 
-focused="off"; label_color=$GREY; bg="off"; bg_color=$BACKGROUND_1; icon_color=$WHITE
+focused="off"; label_color=$GREY; bg="off"; bg_color=$BACKGROUND_1; icon_color=$WHITE; bg_border=$BACKGROUND_2
 if [ "$SID" = "$FOCUSED_WORKSPACE" ]; then
-  focused="on"; label_color=$BLACK; bg="on"
-  bg_color=0xffc6a0f6   # solid mauve pill so the active workspace pops
-  icon_color=$BLACK
+  focused="on"; label_color=$WHITE; bg="on"
+  bg_color=0x66c6a0f6   # translucent mauve — glassy, lets the frosted bar/blur show through
+  icon_color=$WHITE
+  bg_border=$MAGENTA    # crisp mauve edge so the active pill still reads clearly
 fi
 
 # Highlight always tracks focus (even when the item is about to hide).
-# Animate the transition so the mauve pill fades in/out smoothly.
+# Animate the transition so the glassy mauve pill fades in/out smoothly.
 sketchybar --animate tanh 12 --set space.$SID icon.highlight=$focused \
                                               icon.color=$icon_color \
-                                              background.color=$bg_color
+                                              background.color=$bg_color \
+                                              background.border_color=$bg_border
 
 # Show a workspace only if it has windows or is focused.
 if [ -n "$icons" ] || [ "$focused" = "on" ]; then

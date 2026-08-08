@@ -45,7 +45,9 @@ palette = 15=#e5e9f0
 window-decoration = none
 window-padding-x = 18
 window-padding-y = 18
-background-opacity = 0.90
+# Frosted terminal — the system desktop wallpaper shows through. Lower the
+# opacity to reveal more wallpaper; raise toward 1.0 for a more solid terminal.
+background-opacity = 0.85
 background-blur = 40
 alpha-blending = linear-corrected
 

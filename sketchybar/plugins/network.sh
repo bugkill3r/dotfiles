@@ -23,7 +23,13 @@ fmt() {
 DOWN_FORMAT=$(fmt "$DOWN")
 UP_FORMAT=$(fmt "$UP")
 
-sketchybar -m --set network_down label="$DOWN_FORMAT" \
-                    icon.highlight="$([ "$DOWN" -gt 0 ] && echo on || echo off)" \
-              --set network_up   label="$UP_FORMAT" \
-                    icon.highlight="$([ "$UP" -gt 0 ] && echo on || echo off)"
+# Hide the readout entirely when idle (<1 KB/s each way) so the tray isn't
+# cluttered with "0 KB/s" — it reappears the instant there's real traffic.
+THRESH=1024
+if [ "$DOWN" -lt "$THRESH" ] && [ "$UP" -lt "$THRESH" ]; then
+  sketchybar --set network_down drawing=off \
+             --set network_up   drawing=off
+else
+  sketchybar -m --set network_down drawing=on label="$DOWN_FORMAT" \
+                --set network_up   drawing=on label="$UP_FORMAT"
+fi

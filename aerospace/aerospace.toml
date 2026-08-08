@@ -33,8 +33,12 @@ gaps.inner.horizontal = 4
 gaps.inner.vertical   = 4
 gaps.outer.left       = 4
 gaps.outer.bottom     = 4
-gaps.outer.top        = 4
 gaps.outer.right      = 4
+# Top gap is per-monitor: the built-in reserves the notch/menu-bar area, but
+# the external (no notch) needs room for the 45px sketchybar or window tops
+# (e.g. Chrome's tab strip) slide underneath it. First match wins; the bare
+# number is the fallback for every other (external) monitor.
+gaps.outer.top        = [{ monitor.'built-in' = 4 }, 40]
 
 # Keep the dedicated app workspaces alive even when empty
 persistent-workspaces = ["1", "2", "3", "4", "5", "6", "7", "8", "9"]
