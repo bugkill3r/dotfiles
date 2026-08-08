@@ -1,8 +1,17 @@
-vim.g.bugkill3r_colorscheme = "rose-pine"
+-- follow the unified `theme` switcher's catppuccin flavor (mocha/macchiato/…)
+local flavour = "macchiato"
+local fh = io.open(vim.fn.expand("~/.config/catppuccin-flavor"), "r")
+if fh then
+	local l = fh:read("*l"); fh:close()
+	if l and #l > 0 then flavour = l:gsub("%s+", "") end
+end
 
 require("catppuccin").setup({
+	flavour = flavour,
 	transparent_background = false,
 });
+
+vim.g.bugkill3r_colorscheme = "catppuccin"  -- was "rose-pine"; now matches the theme switcher
 
 function ColorMyPencils()
     vim.g.gruvbox_contrast_dark = 'hard'

@@ -1,5 +1,5 @@
 require("bugkill3r.set")
-require("bugkill3r.packer")
+require("bugkill3r.lazy")
 require("bugkill3r.debugger")
 
 -- lsp

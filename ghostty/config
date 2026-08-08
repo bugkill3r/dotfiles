@@ -60,6 +60,10 @@ bold-color = bright
 window-padding-balance = true
 macos-icon = glass
 
+# Cursor smear trail (GLSL). Comment out to disable.
+custom-shader = ~/Dev/dotfiles/ghostty/shaders/cursor_smear.glsl
+custom-shader-animation = true
+
 # Cursor
 cursor-style = block
 cursor-style-blink = true

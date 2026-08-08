@@ -31,7 +31,8 @@ vim.g.t_8f = "\\<Esc>[38;2;%lu;%lu;%lum"
 vim.g.t_8b = "\\<Esc>[48;2;%lu;%lu;%lum"
 
 -- Set colorscheme
-vim.cmd([[colorscheme tokyonight]])
+-- colorscheme now set by the catppuccin lazy spec (follows the theme switcher)
+-- vim.cmd([[colorscheme tokyonight]])
 -- vim.cmd([[colorscheme catppuccin]])  -- Uncomment to switch colorscheme
 
 vim.opt.scrolloff = 8
