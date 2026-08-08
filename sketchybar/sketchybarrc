@@ -84,6 +84,8 @@ source "$ITEM_DIR/battery.sh"
 source "$ITEM_DIR/volume.sh"
 source "$ITEM_DIR/network.sh"
 source "$ITEM_DIR/cpu.sh"
+source "$ITEM_DIR/macmon.sh"
+source "$ITEM_DIR/bluetooth.sh"
 
 # --- polish: color-code right-side icons (catppuccin accents) ---
 sketchybar --set wifi          icon.color=$BLUE    \
@@ -102,6 +104,10 @@ sketchybar --add bracket status_group \
                               background.border_color=$BACKGROUND_2 \
                               background.corner_radius=9 \
                               background.height=26
+
+# subtle shadows for depth
+sketchybar --set workspaces background.shadow.drawing=on background.shadow.color=$SHADOW_COLOR background.shadow.distance=4 background.shadow.angle=-90 \
+           --set status_group background.shadow.drawing=on background.shadow.color=$SHADOW_COLOR background.shadow.distance=4 background.shadow.angle=-90
 
 sketchybar --hotload on
 
