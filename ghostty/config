@@ -50,7 +50,6 @@ background-blur = 40
 alpha-blending = linear-corrected
 
 # Rendering / quality-of-life
-font-thicken = true
 window-save-state = always
 resize-overlay = never
 window-colorspace = display-p3

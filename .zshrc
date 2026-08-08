@@ -176,14 +176,16 @@ function y() {
   rm -f -- "$tmp"
 }
 
+# unified theme switcher — active flavor's env (BAT_THEME etc.)
+[ -f ~/.config/active-theme.sh ] && source ~/.config/active-theme.sh
+
 # fzf
 [ -f ~/.fzf.zsh ] && source ~/.fzf.zsh
 export FZF_TMUX=1
 export FZF_TMUX_OPTS="-p 80%,60%"
+# theme-agnostic: fzf follows the terminal's ANSI palette (set by the Ghostty theme)
 export FZF_DEFAULT_OPTS="
-  --color=bg+:#313244,bg:#1e1e2e,spinner:#f5e0dc,hl:#f38ba8
-  --color=fg:#cdd6f4,header:#f38ba8,info:#cba6f7,pointer:#f5e0dc
-  --color=marker:#a6e3a1,fg+:#cdd6f4,prompt:#cba6f7,hl+:#f38ba8
+  --color=16,fg:-1,bg:-1,fg+:-1,bg+:8,hl:5,hl+:5,info:4,prompt:5,pointer:5,marker:2,spinner:6,header:1,border:8
   --border --height 60%"
 export FZF_CTRL_T_OPTS="--preview 'bat --color=always --line-range :80 {}' --preview-window=right:50%"
 export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -40'"
