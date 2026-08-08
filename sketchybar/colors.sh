@@ -37,8 +37,8 @@ export MAGENTA=0xff${c_mauve}
 export GREY=0xff${c_grey}
 export TRANSPARENT=0x00000000
 
-# Bar + surfaces (alpha baked in: bar ~50% frosted, pill fills ~38%)
-export BAR_COLOR=0x80${c_base}
+# Bar + surfaces (alpha baked in: bar ~25% frosted — see-through but still visible)
+export BAR_COLOR=0x40${c_base}
 export BAR_BORDER_COLOR=0xff${c_surface1}
 export ICON_COLOR=$WHITE
 export LABEL_COLOR=$WHITE
