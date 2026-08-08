@@ -1,4 +1,5 @@
 #!/bin/bash
+[ "$SENDER" = "mouse.exited.global" ] && { sketchybar --set "$NAME" popup.drawing=off; exit 0; }
 
 sketchybar --set $NAME icon="$(date '+%a %d. %b')" label="$(date '+%H:%M')"
 

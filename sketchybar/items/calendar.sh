@@ -19,7 +19,7 @@ calendar=(
 
 sketchybar --add item calendar right       \
            --set calendar "${calendar[@]}" \
-           --subscribe calendar system_woke
+           --subscribe calendar system_woke mouse.exited.global
 
 # popup: full date + a Zen-mode toggle (zen was the old click action)
 sketchybar --add item calendar.date popup.calendar   \

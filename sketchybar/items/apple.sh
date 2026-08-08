@@ -10,6 +10,7 @@ apple_logo=(
   padding_right=15
   label.drawing=off
   click_script="$POPUP_CLICK_SCRIPT"
+  script="$PLUGIN_DIR/popup_close.sh"
   popup.height=35
 )
 
@@ -51,6 +52,7 @@ apple_shutdown=(
 
 sketchybar --add item apple.logo left                  \
            --set apple.logo "${apple_logo[@]}"         \
+           --subscribe apple.logo mouse.exited.global  \
                                                        \
            --add item apple.prefs popup.apple.logo     \
            --set apple.prefs "${apple_prefs[@]}"       \
