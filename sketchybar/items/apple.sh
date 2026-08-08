@@ -31,6 +31,24 @@ apple_lock=(
   click_script="pmset displaysleepnow; $POPUP_OFF"
 )
 
+apple_sleep=(
+  icon=􀆼
+  label="Sleep"
+  click_script="pmset sleepnow; $POPUP_OFF"
+)
+
+apple_restart=(
+  icon=􀅈
+  label="Restart"
+  click_script="osascript -e 'tell app \"System Events\" to restart'; $POPUP_OFF"
+)
+
+apple_shutdown=(
+  icon=􀆨
+  label="Shut Down"
+  click_script="osascript -e 'tell app \"System Events\" to shut down'; $POPUP_OFF"
+)
+
 sketchybar --add item apple.logo left                  \
            --set apple.logo "${apple_logo[@]}"         \
                                                        \
@@ -41,4 +59,13 @@ sketchybar --add item apple.logo left                  \
            --set apple.activity "${apple_activity[@]}" \
                                                        \
            --add item apple.lock popup.apple.logo      \
-           --set apple.lock "${apple_lock[@]}"
+           --set apple.lock "${apple_lock[@]}"          \
+                                                       \
+           --add item apple.sleep popup.apple.logo     \
+           --set apple.sleep "${apple_sleep[@]}"        \
+                                                       \
+           --add item apple.restart popup.apple.logo   \
+           --set apple.restart "${apple_restart[@]}"    \
+                                                       \
+           --add item apple.shutdown popup.apple.logo  \
+           --set apple.shutdown "${apple_shutdown[@]}"
