@@ -1,83 +1,111 @@
-[aws]
-symbol = "  "
+# Catppuccin Mocha palette
+palette = "catppuccin_mocha"
 
-[buf]
-symbol = " "
+format = """
+$directory\
+$git_branch\
+$git_status\
+$nodejs\
+$golang\
+$python\
+$rust\
+$docker_context\
+$cmd_duration\
+$line_break\
+$jobs\
+$character"""
 
-[c]
-symbol = " "
+add_newline = true
 
-[conda]
-symbol = " "
-
-[dart]
-symbol = " "
+[character]
+success_symbol = "[→](bold lavender)"
+error_symbol = "[→](bold red)"
 
 [directory]
-read_only = " "
-
-[docker_context]
-symbol = " "
-
-[elixir]
-symbol = " "
-
-[elm]
-symbol = " "
+style = "bold mauve"
+read_only = " "
+truncation_length = 0
+truncate_to_repo = false
 
 [git_branch]
-symbol = " "
+symbol = " "
+style = "bold teal"
 
-[golang]
-symbol = " "
+[git_status]
+style = "bold pink"
+format = '([$all_status$ahead_behind]($style) )'
 
-[haskell]
-symbol = " "
+[cmd_duration]
+style = "bold yellow"
+min_time = 2000
+format = "[$duration]($style) "
 
-[hg_branch]
-symbol = " "
-
-[java]
-symbol = " "
-
-[julia]
-symbol = " "
-
-[lua]
-symbol = " "
-
-[memory_usage]
-symbol = " "
-
-[meson]
-symbol = "喝 "
-
-[nim]
-symbol = " "
-
-[nix_shell]
-symbol = " "
+[jobs]
+style = "bold peach"
 
 [nodejs]
-symbol = " "
+symbol = " "
+style = "bold green"
 
-[package]
-symbol = " "
+[golang]
+symbol = " "
+style = "bold sapphire"
 
 [python]
-symbol = " "
-
-[rlang]
-symbol = "ﳒ "
-
-[ruby]
-symbol = " "
+symbol = " "
+style = "bold yellow"
 
 [rust]
-symbol = " "
+symbol = " "
+style = "bold peach"
 
-[scala]
-symbol = " "
+[docker_context]
+symbol = " "
+style = "bold blue"
 
-[spack]
-symbol = "🅢 "
+[aws]
+symbol = "  "
+
+[package]
+symbol = " "
+style = "bold peach"
+
+[lua]
+symbol = " "
+
+[java]
+symbol = " "
+
+[ruby]
+symbol = " "
+
+[c]
+symbol = " "
+
+[palettes.catppuccin_mocha]
+rosewater = "#f5e0dc"
+flamingo = "#f2cdcd"
+pink = "#f5c2e7"
+mauve = "#cba6f7"
+red = "#f38ba8"
+maroon = "#eba0ac"
+peach = "#fab387"
+yellow = "#f9e2af"
+green = "#a6e3a1"
+teal = "#94e2d5"
+sky = "#89dceb"
+sapphire = "#74c7ec"
+blue = "#89b4fa"
+lavender = "#b4befe"
+text = "#cdd6f4"
+subtext1 = "#bac2de"
+subtext0 = "#a6adc8"
+overlay2 = "#9399b2"
+overlay1 = "#7f849c"
+overlay0 = "#6c7086"
+surface2 = "#585b70"
+surface1 = "#45475a"
+surface0 = "#313244"
+base = "#1e1e2e"
+mantle = "#181825"
+crust = "#11111b"
