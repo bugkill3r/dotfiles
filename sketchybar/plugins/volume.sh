@@ -41,4 +41,6 @@ case "$SENDER" in
   ;;
   "mouse.clicked") mouse_clicked
   ;;
+  "mouse.exited.global") sketchybar --animate tanh 20 --set volume slider.width=0
+  ;;
 esac
