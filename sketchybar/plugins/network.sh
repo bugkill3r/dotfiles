@@ -1,25 +1,29 @@
 #!/usr/bin/env sh
+# Network throughput from netstat byte counters (no ifstat dependency).
+IFACE="en0"
 
-# Trigger the brew_udpate event when brew update or upgrade is run from cmdline
-# e.g. via function in .zshrc
+counters() { netstat -ibn -I "$IFACE" 2>/dev/null | awk 'NR==2 {print $7, $10; exit}'; }
 
-UPDOWN=$(ifstat -i "en0" -b 0.1 1 | tail -n1)
-DOWN=$(echo $UPDOWN | awk "{ print \$1 }" | cut -f1 -d ".")
-UP=$(echo $UPDOWN | awk "{ print \$2 }" | cut -f1 -d ".")
+set -- $(counters); RX1=${1:-0}; TX1=${2:-0}
+sleep 1
+set -- $(counters); RX2=${1:-0}; TX2=${2:-0}
 
-DOWN_FORMAT=""
-if [ "$DOWN" -gt "999" ]; then
-  DOWN_FORMAT=$(echo $DOWN | awk '{ printf "%03.0f Mbps", $1 / 1000}')
-else
-  DOWN_FORMAT=$(echo $DOWN | awk '{ printf "%03.0f kbps", $1}')
-fi
+DOWN=$((RX2 - RX1))   # bytes/sec
+UP=$((TX2 - TX1))
+[ "$DOWN" -lt 0 ] && DOWN=0
+[ "$UP" -lt 0 ] && UP=0
 
-UP_FORMAT=""
-if [ "$UP" -gt "999" ]; then
-  UP_FORMAT=$(echo $UP | awk '{ printf "%03.0f Mbps", $1 / 1000}')
-else
-  UP_FORMAT=$(echo $UP | awk '{ printf "%03.0f kbps", $1}')
-fi
+fmt() {
+  if [ "$1" -ge 1048576 ]; then
+    awk "BEGIN{printf \"%.1f MB/s\", $1/1048576}"
+  else
+    awk "BEGIN{printf \"%d KB/s\", $1/1024}"
+  fi
+}
+DOWN_FORMAT=$(fmt "$DOWN")
+UP_FORMAT=$(fmt "$UP")
 
-sketchybar -m --set network_down label="$DOWN_FORMAT" icon.highlight=$(if [ "$DOWN" -gt "0" ]; then echo "on"; else echo "off"; fi) \
-                    --set network_up label="$UP_FORMAT" icon.highlight=$(if [ "$UP" -gt "0" ]; then echo "on"; else echo "off"; fi)
+sketchybar -m --set network_down label="$DOWN_FORMAT" \
+                    icon.highlight="$([ "$DOWN" -gt 0 ] && echo on || echo off)" \
+              --set network_up   label="$UP_FORMAT" \
+                    icon.highlight="$([ "$UP" -gt 0 ] && echo on || echo off)"
