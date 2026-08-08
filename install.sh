@@ -46,6 +46,9 @@ link "$DOT/.claude/statusline.py"     "$HOME/.claude/statusline.py"
 echo "==> tmux plugin manager (tpm)"
 [ -d "$HOME/.tmux/plugins/tpm" ] || git clone -q https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
 
+echo "==> macOS defaults"
+bash "$DOT/macos.sh" || true
+
 echo "==> Services"
 for svc in sketchybar borders; do
   HOMEBREW_NO_REQUIRE_TAP_TRUST=1 brew services start "$svc" 2>/dev/null || true
