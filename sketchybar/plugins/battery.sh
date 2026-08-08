@@ -32,3 +32,12 @@ fi
 # always visible, with a percentage label
 sketchybar --set $NAME drawing=on icon="$ICON" icon.color=$COLOR \
                        label="${PERCENTAGE}%" label.drawing=on
+
+# popup detail: time remaining
+TIME_LEFT="$(echo "$BATTERY_INFO" | grep -Eo '[0-9]+:[0-9]+' | head -1)"
+if [[ $CHARGING != "" ]]; then
+  DETAIL="Charging${TIME_LEFT:+ · $TIME_LEFT to full}"
+else
+  DETAIL="${TIME_LEFT:+$TIME_LEFT remaining}"; DETAIL="${DETAIL:-Calculating…}"
+fi
+sketchybar --set battery.info label="$DETAIL" 2>/dev/null

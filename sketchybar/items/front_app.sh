@@ -3,11 +3,16 @@
 # This script sets up the front app label with an icon
 # We'll use the icon_map.sh script that's already part of your setup
 
-# Use the SF-Symbol mapper (clean glyphs) for the focused app icon + name.
+# Use the SF-Symbol mapper (clean glyphs) for the focused app icon + name,
+# and append the focused window title (best-effort; updates on app switch).
 FRONT_APP_SCRIPT='
-  [ "$SENDER" = "front_app_switched" ] &&
-  icon=$("$CONFIG_DIR/plugins/front_app.sh" "$INFO") &&
-  sketchybar --set $NAME icon="$icon" label="$INFO"
+  if [ "$SENDER" = "front_app_switched" ]; then
+    icon=$("$CONFIG_DIR/plugins/front_app.sh" "$INFO")
+    title=$(aerospace list-windows --focused --format "%{window-title}" 2>/dev/null | head -1)
+    label="$INFO"
+    [ -n "$title" ] && [ "$title" != "$INFO" ] && label="$INFO  ·  ${title:0:36}"
+    sketchybar --set $NAME icon="$icon" label="$label"
+  fi
 '
 
 # Define the front_app item

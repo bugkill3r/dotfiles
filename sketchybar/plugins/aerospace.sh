@@ -4,6 +4,16 @@
 SID="$1"
 source "$CONFIG_DIR/colors.sh"
 
+# Hover: subtle background on non-focused pills (mouse.exited falls through to
+# the normal repaint below, which restores the correct state).
+case "$SENDER" in
+  mouse.entered)
+    [ "$SID" != "$(aerospace list-workspaces --focused 2>/dev/null)" ] && \
+      sketchybar --animate sin 8 --set space.$SID background.drawing=on background.color=0x30cad3f5
+    exit 0
+    ;;
+esac
+
 # Fall back to querying AeroSpace if the event didn't carry the focused workspace
 # (startup paint, or a trigger without the env set).
 FOCUSED_WORKSPACE="${FOCUSED_WORKSPACE:-$(aerospace list-workspaces --focused 2>/dev/null)}"

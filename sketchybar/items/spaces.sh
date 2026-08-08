@@ -6,7 +6,7 @@ sketchybar --add event aerospace_workspace_change
 
 for sid in $(aerospace list-workspaces --all); do
   sketchybar --add item space.$sid left \
-    --subscribe space.$sid aerospace_workspace_change \
+    --subscribe space.$sid aerospace_workspace_change mouse.entered mouse.exited \
     --set space.$sid \
       updates=on \
       associated_display=active \
