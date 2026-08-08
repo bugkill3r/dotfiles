@@ -4,6 +4,10 @@
 
 config-version = 2
 
+# Notify sketchybar when the focused workspace changes
+exec-on-workspace-change = ['/bin/bash', '-c',
+    'sketchybar --trigger aerospace_workspace_change FOCUSED_WORKSPACE=$AEROSPACE_FOCUSED_WORKSPACE']
+
 # Start AeroSpace at login (replaces the old yabai/skhd LaunchAgents)
 start-at-login = true
 

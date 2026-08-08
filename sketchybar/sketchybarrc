@@ -21,7 +21,8 @@ launchctl unload -F /System/Library/LaunchAgents/com.apple.OSDUIHelper.plist > /
 # Setting up the general bar appearance of the bar
 bar=(
   height=45
-  color=$BAR_COLOR
+  color=0xb31e1e2e      # ~70% opacity for a frosted look
+  blur_radius=30        # background blur behind the bar
   border_width=2
   border_color=$BAR_BORDER_COLOR
   shadow=off
@@ -65,7 +66,7 @@ sketchybar --default "${defaults[@]}"
 # Left
 source "$ITEM_DIR/apple.sh"
 source "$ITEM_DIR/spaces.sh"
-source "$ITEM_DIR/yabai.sh"
+# source "$ITEM_DIR/yabai.sh"  # disabled: yabai removed (AeroSpace)
 source "$ITEM_DIR/front_app.sh"
 
 # Center
@@ -80,6 +81,24 @@ source "$ITEM_DIR/battery.sh"
 source "$ITEM_DIR/volume.sh"
 source "$ITEM_DIR/network.sh"
 source "$ITEM_DIR/cpu.sh"
+
+# --- polish: color-code right-side icons (catppuccin accents) ---
+sketchybar --set wifi          icon.color=$BLUE    \
+           --set volume_icon   icon.color=$GREEN   \
+           --set network_up    icon.color=$BLUE    \
+           --set network_down  icon.color=$MAGENTA \
+           --set calendar      icon.color=$MAGENTA \
+           --set cpu.percent   icon.color=$YELLOW  \
+           --set brew          icon.color=$YELLOW
+
+# --- group the right-side status items in a subtle rounded bracket ---
+sketchybar --add bracket status_group \
+             cpu.percent cpu.sys cpu.user network_up network_down \
+             volume volume_icon battery wifi \
+           --set status_group background.color=$BACKGROUND_1 \
+                              background.border_color=$BACKGROUND_2 \
+                              background.corner_radius=9 \
+                              background.height=26
 
 sketchybar --hotload on
 

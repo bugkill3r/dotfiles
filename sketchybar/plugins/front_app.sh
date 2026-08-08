@@ -4,8 +4,14 @@ case "$1" in
 "WhatsApp")
   icon_result="􀌾"
   ;;
-"Terminal" | "ITerm" | "kitty" | "Alacritty" | "Hyper" | "iTerm2" | "终端" | "WezTerm")
+"Terminal" | "ITerm" | "kitty" | "Alacritty" | "Hyper" | "iTerm2" | "终端" | "WezTerm" | "Ghostty" | "ghostty")
   icon_result="􀆍"
+  ;;
+"Cursor")
+  icon_result="􀤙"
+  ;;
+"Claude")
+  icon_result="􀪬"
   ;;
 "Code" | "Visual Studio Code" | "VSCodium")
   icon_result="􀤙"

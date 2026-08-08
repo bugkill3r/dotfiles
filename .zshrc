@@ -4,7 +4,7 @@
 # Path to your Oh My Zsh installation.
 export ZSH="$HOME/.oh-my-zsh"
 
-ZSH_THEME="spaceship"
+ZSH_THEME=""   # was "spaceship" (slow); using starship instead (init at bottom of file)
 
 # Spaceship theme configuration
 SPACESHIP_PROMPT_ORDER=(
@@ -226,3 +226,8 @@ if [ -L "$_brew_svc" ] && [ ! -f "$_brew_svc" ]; then
 fi
 unset _brew_svc
 export PATH="$HOME/.local/bin:$PATH"
+
+# starship prompt (replaces spaceship) — must be last so it wins the prompt.
+# Full path to the brew build (1.26+, supports palettes); a root-owned 1.10.3
+# lingers in /usr/local/bin and would otherwise shadow it.
+eval "$(/opt/homebrew/bin/starship init zsh)"

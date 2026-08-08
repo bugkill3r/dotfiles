@@ -1,4 +1,7 @@
 case "$1" in
+"Ghostty")
+  icon_result=":terminal:"
+  ;;
 "WhatsApp")
   icon_result=":whats_app:"
   ;;

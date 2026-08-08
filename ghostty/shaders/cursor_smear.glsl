@@ -18,7 +18,8 @@ float aa(float dist) {
     return 1.0 - smoothstep(0.0, nrm(vec2(2.0), 0.0).x, dist);
 }
 
-const float DURATION = 0.15; // seconds
+const float DURATION = 0.18; // seconds (higher = slower, smoother smear)
+const float STRENGTH = 0.30; // max trail opacity (lower = more subtle)
 
 void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     // Start from the already-rendered terminal (cursor included).
@@ -33,7 +34,7 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
 
     // Animation progress (eased). At rest progress == 1 -> alpha 0 -> no-op.
     float p = clamp((iTime - iTimeCursorChange) / DURATION, 0.0, 1.0);
-    float e = 1.0 - pow(1.0 - p, 3.0);           // easeOutCubic
+    float e = 1.0 - pow(1.0 - p, 2.0);           // easeOutQuad (gentler than cubic)
     vec2 trail = mix(prevC, curC, e);            // lagging position
 
     // Capsule (rounded segment) between the lagging point and the cursor.
@@ -44,6 +45,6 @@ void mainImage(out vec4 fragColor, in vec2 fragCoord) {
     vec2 closest = trail + dir * proj;
     float dist = length(vu - closest) - curSize.y * 0.5;
 
-    float alpha = aa(dist) * (1.0 - e);          // fades as the move completes
+    float alpha = aa(dist) * (1.0 - e) * STRENGTH;   // fades as the move completes
     fragColor = mix(fragColor, iCurrentCursorColor, alpha);
 }
