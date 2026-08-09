@@ -1,16 +1,20 @@
 #!/usr/bin/env bash
 # JankyBorders — theme-aware window borders.
-# Reads the active Ghostty palette so the border matches the current theme.
+# Colors come from the active catppuccin flavor (~/.config/catppuccin-flavor),
+# the same source sketchybar uses, so the border accent matches the bar exactly.
+# (The Ghostty palette maps slot 5 to Pink, not Mauve — hence not using it.)
 # `theme` restarts this service, so switching flavors recolors the borders too.
-theme="$HOME/.config/ghostty/current-theme"
-hex() { grep -E "^[[:space:]]*palette[[:space:]]*=[[:space:]]*$1[[:space:]]*=" "$theme" 2>/dev/null \
-        | grep -oE '[0-9a-fA-F]{6}' | tail -1; }
-accent=$(hex 5); alt=$(hex 4); dim=$(hex 8)    # magenta + blue + grey
-accent=${accent:-c6a0f6}; alt=${alt:-8aadf4}; dim=${dim:-494d64}  # catppuccin fallback
+
+case "$(cat "$HOME/.config/catppuccin-flavor" 2>/dev/null || echo mocha)" in
+  latte)     mauve=8839ef; blue=1e66f5; dim=bcc0cc ;;
+  frappe)    mauve=ca9ee6; blue=8caaee; dim=51576d ;;
+  macchiato) mauve=c6a0f6; blue=8aadf4; dim=494d64 ;;
+  mocha|*)   mauve=cba6f7; blue=89b4fa; dim=45475a ;;
+esac
 
 borders \
   style=round \
   width=4.0 \
   hidpi=on \
-  active_color="gradient(top_left=0xff${accent},bottom_right=0xff${alt})" \
+  active_color="gradient(top_left=0xff${mauve},bottom_right=0xff${blue})" \
   inactive_color=0x40${dim}
