@@ -1,20 +1,21 @@
 #!/usr/bin/env bash
 # JankyBorders — theme-aware window borders.
-# Colors come from the active catppuccin flavor (~/.config/catppuccin-flavor),
-# the same source sketchybar uses, so the border accent matches the bar exactly.
-# (The Ghostty palette maps slot 5 to Pink, not Mauve — hence not using it.)
-# `theme` restarts this service, so switching flavors recolors the borders too.
+# Deliberately colorless: the focused window gets a light grey outline, the
+# unfocused ones a dark grey one. Focus is shown by contrast alone, so the
+# border never competes with the bar's accent.
+# Greys follow the active catppuccin flavor (~/.config/catppuccin-flavor);
+# `theme` restarts this service, so switching flavors updates them too.
 
 case "$(cat "$HOME/.config/catppuccin-flavor" 2>/dev/null || echo mocha)" in
-  latte)     mauve=8839ef; blue=1e66f5; dim=bcc0cc ;;
-  frappe)    mauve=ca9ee6; blue=8caaee; dim=51576d ;;
-  macchiato) mauve=c6a0f6; blue=8aadf4; dim=494d64 ;;
-  mocha|*)   mauve=cba6f7; blue=89b4fa; dim=45475a ;;
+  latte)     on=7c7f93; off=bcc0cc ;;   # light theme: darker line reads as "on"
+  frappe)    on=b5bfe2; off=51576d ;;
+  macchiato) on=b8c0e0; off=494d64 ;;
+  mocha|*)   on=a6adc8; off=45475a ;;
 esac
 
 borders \
   style=round \
   width=4.0 \
   hidpi=on \
-  active_color="gradient(top_left=0xff${mauve},bottom_right=0xff${blue})" \
-  inactive_color=0x40${dim}
+  active_color=0xff${on} \
+  inactive_color=0x40${off}
