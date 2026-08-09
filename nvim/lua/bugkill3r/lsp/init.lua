@@ -87,74 +87,41 @@ M.setup = function()
     end
   }
 
-  -- Register lspconfig defaults
-  local lspconfig = require('lspconfig')
-  lspconfig.util.default_config = vim.tbl_deep_extend(
-    'force',
-    lspconfig.util.default_config,
-    lsp_defaults
-  )
+  -- Defaults for every server. On Neovim 0.11+ this is vim.lsp.config("*"),
+  -- which extends the base configs nvim-lspconfig ships in lsp/<name>.lua —
+  -- the old require("lspconfig").util.default_config path is deprecated.
+  vim.lsp.config("*", lsp_defaults)
 
-  -- Lua LSP configuration
-  lspconfig.lua_ls.setup {
+  vim.lsp.config("lua_ls", {
     settings = {
       Lua = {
-        runtime = {
-          -- Tell the language server which version of Lua you're using
-          version = 'LuaJIT',
-        },
-        diagnostics = {
-          -- Get the language server to recognize the `vim` global
-          globals = {'vim'},
-        },
+        runtime = { version = "LuaJIT" },
+        diagnostics = { globals = { "vim" } },
         workspace = {
-          -- Make the server aware of Neovim runtime files
           library = vim.api.nvim_get_runtime_file("", true),
           checkThirdParty = false,
         },
-        telemetry = {
-          enable = false,
-        },
+        telemetry = { enable = false },
       },
     },
-  }
+  })
 
-  -- TypeScript/JavaScript
-  lspconfig.ts_ls.setup {}
+  vim.lsp.config("jsonls", {
+    settings = { json = { validate = { enable = true } } },
+  })
 
-  -- Python
-  lspconfig.pyright.setup {}
-
-  -- Go
-  lspconfig.gopls.setup {}
-
-  -- HTML
-  lspconfig.html.setup {}
-
-  -- CSS
-  lspconfig.cssls.setup {}
-
-  -- JSON
-  lspconfig.jsonls.setup {
+  -- Rust: rust-tools is abandoned; rust_analyzer is configured directly.
+  vim.lsp.config("rust_analyzer", {
     settings = {
-      json = {
-        validate = { enable = true },
+      ["rust-analyzer"] = {
+        checkOnSave = { command = "clippy" },
       },
     },
-  }
+  })
 
-  -- Rust (using rust-tools for better integration)
-  require('rust-tools').setup({
-    server = {
-      on_attach = keymaps.on_attach,
-      settings = {
-        ["rust-analyzer"] = {
-          checkOnSave = {
-            command = "clippy",
-          },
-        },
-      },
-    },
+  vim.lsp.enable({
+    "lua_ls", "ts_ls", "pyright", "gopls",
+    "html", "cssls", "jsonls", "rust_analyzer",
   })
 end
 

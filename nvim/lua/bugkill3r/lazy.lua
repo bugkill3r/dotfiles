@@ -33,7 +33,6 @@ require("lazy").setup({
   "b0o/schemastore.nvim",
 
   -- LSP / completion
-  "VonHeikemen/lsp-zero.nvim",
   "neovim/nvim-lspconfig",
   "williamboman/mason.nvim",
   "williamboman/mason-lspconfig.nvim",
