@@ -89,7 +89,6 @@ require("lazy").setup({
   "Saecki/crates.nvim",
 
   -- AI
-  "github/copilot.vim",
   "supermaven-inc/supermaven-nvim",
   {
     "olimorris/codecompanion.nvim",
