@@ -1,56 +1,48 @@
-local lsp_zero = require("lsp-zero")
+-- Native LSP for Neovim 0.11+ (vim.lsp.config / vim.lsp.enable) — no lsp-zero,
+-- no direct require("lspconfig") (both are deprecated on 0.11+).
 
-lsp_zero.on_attach(function(client, bufnr)
-    local opts = { buffer = bufnr, remap = false }
-
-    if client.name == "eslint" then
-        vim.cmd.LspStop("eslint")
-        return
-    end
-
-    vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
-    vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
-    vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
-    vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
-    vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
-    vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
-    vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
-    vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
-    vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
-    vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
-end)
+-- Keymaps whenever a language server attaches to a buffer.
+vim.api.nvim_create_autocmd("LspAttach", {
+    callback = function(e)
+        local opts = { buffer = e.buf, remap = false }
+        vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
+        vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
+        vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
+        vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
+        vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
+        vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
+        vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
+        vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
+        vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
+        vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
+    end,
+})
 
 require("mason").setup()
 require("mason-lspconfig").setup({
-    ensure_installed = {
-        "lua_ls",
-        "eslint",
-        "rust_analyzer",
-        "ts_ls"
-    },
+    ensure_installed = { "lua_ls", "eslint", "rust_analyzer", "ts_ls" },
     automatic_installation = true,
-    -- Disable automatic_enable which requires Neovim 0.11+ (vim.lsp.enable)
-    automatic_enable = false,
+    automatic_enable = false, -- we enable explicitly below
 })
 
-local lspconfig = require("lspconfig")
+-- Completion capabilities applied to every server (nvim-lspconfig ships the
+-- base lsp/<name>.lua configs that vim.lsp.config extends).
+local ok_cmp_lsp, cmp_lsp = pcall(require, "cmp_nvim_lsp")
+if ok_cmp_lsp then
+    vim.lsp.config("*", { capabilities = cmp_lsp.default_capabilities() })
+end
 
-lspconfig.ts_ls.setup({})
-lspconfig.eslint.setup({})
-lspconfig.rust_analyzer.setup({})
-lspconfig.lua_ls.setup({
-    settings = {
-        Lua = {
-            diagnostics = {
-                globals = { "vim" },
-            },
-        },
-    },
+vim.lsp.config("lua_ls", {
+    settings = { Lua = { diagnostics = { globals = { "vim" } } } },
 })
 
+-- eslint stays installed (mason) but isn't started as an LSP, matching the old
+-- behaviour where it was stopped on attach.
+vim.lsp.enable({ "lua_ls", "ts_ls", "rust_analyzer" })
+
+-- Completion.
 local cmp = require("cmp")
 local cmp_select = { behavior = cmp.SelectBehavior.Select }
-
 cmp.setup({
     mapping = {
         ["<C-p>"] = cmp.mapping.select_prev_item(cmp_select),
@@ -59,106 +51,9 @@ cmp.setup({
         ["<C-Space>"] = cmp.mapping.complete(),
     },
     sources = {
-        {name = 'nvim_lsp'},
-        {name = 'buffer'},
-    }
+        { name = "nvim_lsp" },
+        { name = "buffer" },
+    },
 })
 
-lsp_zero.setup()
-
-vim.diagnostic.config({
-    virtual_text = true,
-})
-
-
--- local lsp = require("lsp-zero")
---
--- lsp.preset("recommended")
---
--- -- lsp.ensure_installed({
---     --  'tsserver',
---     -- 'eslint',
---     -- 'rust_analyzer',
---     -- })
---
--- require('mason').setup()
--- require('mason-lspconfig').setup({
---     ensure_installed = { 'lua_ls', 'ts_ls', 'eslint', 'rust_analyzer' }
--- })
---
--- -- Fix Undefined global 'vim'
--- lsp.configure('lua_ls', {
---     settings = {
---         Lua = {
---             diagnostics = {
---                 globals = { 'vim' }
---             }
---         }
---     }
--- })
---
--- local cmp = require('cmp')
--- local lspkind = require('lspkind')
--- local cmp_select = {behavior = cmp.SelectBehavior.Select}
--- local cmp_mappings = lsp.defaults.cmp_mappings({
---   ['<C-p>'] = cmp.mapping.select_prev_item(cmp_select),
---   ['<C-n>'] = cmp.mapping.select_next_item(cmp_select),
---   ['<C-y>'] = cmp.mapping.confirm({ select = true }),
---   ["<C-Space>"] = cmp.mapping.complete(),
--- })
---
--- local cmp_formatting = lspkind.cmp_format({
---   mode = 'symbol',
---   maxwidth = 50,
---   ellipsis_char = '...',
---   before = function (entry, vim_item)
---     vim_item.kind = lspkind.presets.default[vim_item.kind]
---     return vim_item
---   end
--- })
---
--- -- disable completion with tab
--- -- this helps with copilot setup
--- cmp_mappings['<Tab>'] = nil
--- cmp_mappings['<S-Tab>'] = nil
---
--- lsp.setup_nvim_cmp({
---   mapping = cmp_mappings,
---   formatting = cmp_formatting
--- })
---
--- lsp.set_preferences({
---     suggest_lsp_servers = false,
---     sign_icons = {
---         error = 'E',
---         warn = 'W',
---         hint = 'H',
---         info = 'I'
---     }
--- })
---
--- lsp.on_attach(function(client, bufnr)
---   local opts = {buffer = bufnr, remap = false}
---
---   if client.name == "eslint" then
---       vim.cmd.LspStop('eslint')
---       return
---   end
---
---   vim.keymap.set("n", "gd", vim.lsp.buf.definition, opts)
---   vim.keymap.set("n", "K", vim.lsp.buf.hover, opts)
---   vim.keymap.set("n", "<leader>vws", vim.lsp.buf.workspace_symbol, opts)
---   vim.keymap.set("n", "<leader>vd", vim.diagnostic.open_float, opts)
---   vim.keymap.set("n", "[d", vim.diagnostic.goto_next, opts)
---   vim.keymap.set("n", "]d", vim.diagnostic.goto_prev, opts)
---   vim.keymap.set("n", "<leader>vca", vim.lsp.buf.code_action, opts)
---   vim.keymap.set("n", "<leader>vrr", vim.lsp.buf.references, opts)
---   vim.keymap.set("n", "<leader>vrn", vim.lsp.buf.rename, opts)
---   vim.keymap.set("i", "<C-h>", vim.lsp.buf.signature_help, opts)
--- end)
---
--- lsp.setup()
---
--- vim.diagnostic.config({
---     virtual_text = true,
--- })
+vim.diagnostic.config({ virtual_text = true })

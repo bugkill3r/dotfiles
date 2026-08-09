@@ -27,8 +27,11 @@ click() {
 }
 
 case "$SENDER" in
-  "wifi_change") update
-  ;;
   "mouse.clicked") click
+  ;;
+  # wifi_change, system_woke, routine/forced updates — anything else repaints.
+  # (Only reacting to wifi_change left the icon stuck at its initial
+  # "disconnected" value whenever no change event fired after a restart.)
+  *) update
   ;;
 esac

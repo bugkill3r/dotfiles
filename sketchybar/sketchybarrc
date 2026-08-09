@@ -133,7 +133,7 @@ sketchybar --set wifi          icon.color=$WHITE   \
            --set network_up    icon.color=$GREY    \
            --set network_down  icon.color=$GREY    \
            --set weather       icon.color=$WHITE   \
-           --set calendar      icon.color=$MAGENTA label.color=$MAGENTA
+           --set calendar      icon.color=$MAGENTA label.color=$WHITE
 
 # ═══ LAYOUT BRACKETS ═══ depend on BAR_STYLE (set in the bar block above).
 if [ "$BAR_STYLE" = "slab" ]; then

@@ -41,13 +41,9 @@ M.setup = function()
         vim.fn.sign_define(hl, { text = icon, texthl = hl, numhl = "" })
     end
 
-    vim.lsp.handlers["textDocument/hover"] = vim.lsp.with(vim.lsp.handlers.hover, {
-        border = "rounded",
-    })
-
-    vim.lsp.handlers["textDocument/signatureHelp"] = vim.lsp.with(vim.lsp.handlers.signature_help, {
-        border = "rounded",
-    })
+    -- Rounded borders for hover/signature popups. vim.lsp.with() is deprecated
+    -- on 0.11+; set the default winborder instead.
+    vim.o.winborder = "rounded"
 end
 
 local function lsp_highlight_document(client)

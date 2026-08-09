@@ -87,7 +87,6 @@ require("lazy").setup({
 
   -- languages
   "mfussenegger/nvim-jdtls",
-  "simrat39/rust-tools.nvim",
   "Saecki/crates.nvim",
 
   -- AI

@@ -7,7 +7,6 @@ require("bugkill3r.cmp")
 require("bugkill3r.lsp").setup()
 require("bugkill3r.icons")
 require("bugkill3r.dap")
-require("bugkill3r.rt")
 require("bugkill3r.fzf")
 require("bugkill3r.gitsigns")
 
