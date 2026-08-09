@@ -1,21 +1,24 @@
 #!/usr/bin/env bash
 # JankyBorders — theme-aware window borders.
-# Deliberately colorless: the focused window gets a light grey outline, the
-# unfocused ones a dark grey one. Focus is shown by contrast alone, so the
-# border never competes with the bar's accent.
+# Deliberately colorless: focus reads by contrast, not hue, so the border never
+# competes with the bar's accent. The active border is a subtle light→mid grey
+# gradient (top-left brightest) which gives the outline a little depth instead
+# of looking like a flat sticker.
 # Greys follow the active catppuccin flavor (~/.config/catppuccin-flavor);
 # `theme` restarts this service, so switching flavors updates them too.
 
 case "$(cat "$HOME/.config/catppuccin-flavor" 2>/dev/null || echo mocha)" in
-  latte)     on=7c7f93; off=bcc0cc ;;   # light theme: darker line reads as "on"
-  frappe)    on=b5bfe2; off=51576d ;;
-  macchiato) on=b8c0e0; off=494d64 ;;
-  mocha|*)   on=a6adc8; off=45475a ;;
+  #          bright        mid           inactive
+  latte)     hi=8c8fa1; lo=acb0be; off=ccd0da ;;   # light theme: darker = active
+  frappe)    hi=c6ceef; lo=838ba7; off=51576d ;;
+  macchiato) hi=c5cdf0; lo=8087a2; off=494d64 ;;
+  mocha|*)   hi=bac2de; lo=7f849c; off=45475a ;;
 esac
 
 borders \
   style=round \
   width=4.0 \
   hidpi=on \
-  active_color=0xff${on} \
-  inactive_color=0x40${off}
+  active_color="gradient(top_left=0xff${hi},bottom_right=0xff${lo})" \
+  inactive_color=0x33${off} \
+  blacklist="Raycast,Alfred,Dock,Notification Center,Control Center,Spotlight"
