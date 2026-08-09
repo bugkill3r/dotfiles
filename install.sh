@@ -117,6 +117,14 @@ i_core() {
   link "$DOT/btop"            "$HOME/.config/btop"
   [ -d "$HOME/.tmux/plugins/tpm" ] || run git clone -q https://github.com/tmux-plugins/tpm "$HOME/.tmux/plugins/tpm"
   ok "tmux + tpm"
+  # tmux-which-key reads its config from inside the plugin dir (its XDG mode
+  # relies on GNU realpath, which macOS lacks), so link ours over the shipped
+  # one. Only possible once tpm has cloned the plugin — re-run after `prefix+I`.
+  wk="$HOME/.tmux/plugins/tmux-which-key"
+  if [ -d "$wk" ]; then
+    [ -e "$wk/config.yaml" ] && [ ! -L "$wk/config.yaml" ] && run mv "$wk/config.yaml" "$wk/config.yaml.orig"
+    link "$DOT/tmux/which-key/config.yaml" "$wk/config.yaml"
+  fi
 }
 i_shell() {
   step "Zsh (oh-my-zsh + Starship)"
