@@ -109,6 +109,24 @@ keybind = super+equal=increase_font_size:1
 keybind = super+minus=decrease_font_size:1
 keybind = super+digit_0=reset_font_size
 
+# ── Command palette (⌘⇧P) ───────────────────────────────────────────────────
+# Ghostty's palette can't be restyled, but it can be extended. These put this
+# setup's own commands one fuzzy-search away — no keybinds to memorise.
+# `text:` types the command and \n runs it, so they only work in a shell prompt.
+command-palette-entry = title:"Theme: Pick…",description:"fzf picker with live preview",action:"text:theme\n"
+command-palette-entry = title:"Theme: Mocha",description:"Catppuccin Mocha everywhere",action:"text:theme mocha\n"
+command-palette-entry = title:"Theme: Macchiato",description:"Catppuccin Macchiato everywhere",action:"text:theme macchiato\n"
+command-palette-entry = title:"Theme: Frappe",description:"Catppuccin Frappe everywhere",action:"text:theme frappe\n"
+command-palette-entry = title:"Theme: Latte (light)",description:"Catppuccin Latte everywhere",action:"text:theme latte\n"
+command-palette-entry = title:"Bar: Toggle Layout",description:"Switch sketchybar between slab and islands",action:"text:barstyle\n"
+command-palette-entry = title:"Bar: Toggle Blur",description:"Frosted glass vs clear transparency",action:"text:barblur\n"
+command-palette-entry = title:"Bar: Opacity…",description:"Set the sketchybar tint opacity 0-100",action:"text:baropacity "
+command-palette-entry = title:"Tmux: Session Picker",description:"Switch or create a session with sesh",action:"text:sesh connect $(sesh list | fzf)\n"
+command-palette-entry = title:"Files: Yazi",description:"Open the yazi file manager",action:"text:yazi\n"
+command-palette-entry = title:"Git: Lazygit",description:"Open lazygit in the current repo",action:"text:lazygit\n"
+command-palette-entry = title:"System: btop",description:"Resource monitor",action:"text:btop\n"
+command-palette-entry = title:"Dotfiles",description:"cd to the dotfiles repo",action:"text:cd ~/Dev/dotfiles\n"
+
 # Theme override (managed by gtheme script)
 config-file = ~/.config/ghostty/current-theme
 
