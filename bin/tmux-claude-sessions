@@ -103,7 +103,7 @@ def cmd_save():
     print(f"saved {len(rows)} Claude pane(s) -> {STATE}")
 
 
-def cmd_restore():
+def cmd_restore(dry=False):
     try:
         with open(STATE) as fh:
             data = json.load(fh)
@@ -116,20 +116,35 @@ def cmd_restore():
     for p in data.get("panes", []):
         pane, sid, cwd = p["pane"], p["session"], p["cwd"]
         if pane not in live:
+            print(f"  skip {pane:16} pane no longer exists")
             skipped += 1
             continue
         # only type into an idle shell, never over a running program
         cur = tmux("display-message", "-p", "-t", pane, "#{pane_current_command}").strip()
         if cur not in ("zsh", "bash", "sh", "fish"):
+            print(f"  skip {pane:16} busy running {cur!r}")
             skipped += 1
             continue
-        tmux("send-keys", "-t", pane, f"cd {cwd!r} && claude -r {sid}", "Enter")
+        cmd = f"cd {cwd!r} && claude -r {sid}"
+        if dry:
+            print(f"  [dry] {pane:16} {cmd}")
+        else:
+            tmux("send-keys", "-t", pane, cmd, "Enter")
+            print(f"  sent {pane:16} claude -r {sid[:8]}")
         done += 1
-    print(f"resumed {done} pane(s), skipped {skipped}")
+    verb = "would resume" if dry else "resumed"
+    print(f"\n{verb} {done} pane(s), skipped {skipped}")
 
 
 if __name__ == "__main__":
-    action = sys.argv[1] if len(sys.argv) > 1 else "list"
-    {"save": cmd_save, "restore": cmd_restore, "list": cmd_list}.get(
-        action, lambda: sys.exit(__doc__)
-    )()
+    args = sys.argv[1:]
+    dry = "--dry-run" in args or "-n" in args
+    action = next((a for a in args if not a.startswith("-")), "list")
+    if action == "restore":
+        cmd_restore(dry=dry)
+    elif action == "save":
+        cmd_save()
+    elif action == "list":
+        cmd_list()
+    else:
+        sys.exit(__doc__)
