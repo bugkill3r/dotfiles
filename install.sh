@@ -172,7 +172,7 @@ i_fonts() {
 i_theming() {
   step "Bar/theme scripts → ~/.local/bin"
   [ "$DRY" = 1 ] || mkdir -p "$HOME/.local/bin"
-  for s in theme barstyle barblur baropacity gtheme tmux-window-gradient.py; do
+  for s in theme barstyle barblur baropacity gtheme tmux-window-gradient.py tmux-claude-sessions; do
     link "$DOT/bin/$s" "$HOME/.local/bin/$s"
   done
   link "$DOT/.claude/statusline.py" "$HOME/.claude/statusline.py"

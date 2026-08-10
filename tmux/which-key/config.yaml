@@ -74,6 +74,13 @@ items:
       - name: Sessions (sesh)
         key: s
         command: 'popup -E -w 60% -h 50% "sesh connect \"$(sesh list | fzf)\""'
+      - separator: true
+      - name: "Claude: list saved panes"
+        key: c
+        command: 'popup -E -w 70% -h 50% "tmux-claude-sessions list; read -k1"'
+      - name: "Claude: resume all panes"
+        key: r
+        command: 'run-shell "tmux-claude-sessions restore"'
   - name: Copy
     key: c
     menu:

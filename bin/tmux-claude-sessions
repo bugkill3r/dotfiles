@@ -1,0 +1,135 @@
+#!/usr/bin/env python3
+"""Save/restore the Claude Code conversation running in each tmux pane.
+
+tmux-resurrect brings back the layout and working directories, but panes come
+back as empty shells — `claude` isn't one of the programs it restarts, and even
+if it were, a fresh `claude` starts a NEW conversation. This maps each pane to
+the specific conversation it was running so it can be resumed in place.
+
+    tmux-claude-sessions save      snapshot pane -> session id  (run before restart)
+    tmux-claude-sessions restore   re-launch `claude -r <id>` in each saved pane
+    tmux-claude-sessions list      show what's currently detected
+
+How the mapping works: Claude writes a transcript per conversation to
+~/.claude/projects/<cwd>/<session-id>.jsonl and stamps it with an `aiTitle`.
+Claude also sets that title as the terminal/pane title, so pane title -> aiTitle
+-> session id. Panes whose title matches no transcript are left alone.
+"""
+import json, glob, os, re, subprocess, sys, time
+
+STATE = os.path.expanduser("~/.local/share/tmux/claude-sessions.json")
+PROJECTS = os.path.expanduser("~/.claude/projects")
+
+
+def tmux(*args):
+    return subprocess.run(["tmux", *args], capture_output=True, text=True).stdout
+
+
+def transcripts():
+    """{aiTitle: [(session_id, mtime, project_dir), ...]} newest first."""
+    out = {}
+    for f in glob.glob(os.path.join(PROJECTS, "*", "*.jsonl")):
+        title = None
+        try:
+            with open(f, errors="ignore") as fh:
+                for line in fh:
+                    if '"aiTitle"' not in line:
+                        continue
+                    try:
+                        d = json.loads(line)
+                    except ValueError:
+                        continue
+                    if d.get("aiTitle"):
+                        title = d["aiTitle"]
+        except OSError:
+            continue
+        if title:
+            out.setdefault(title, []).append(
+                (os.path.basename(f)[:-6], os.path.getmtime(f), os.path.dirname(f))
+            )
+    for v in out.values():
+        v.sort(key=lambda t: -t[1])
+    return out
+
+
+def detect():
+    """[(pane, cwd, title, session_id)] for panes running a Claude conversation."""
+    by_title = transcripts()
+    used, rows = set(), []
+    listing = tmux(
+        "list-panes", "-a", "-F",
+        "#{session_name}:#{window_index}.#{pane_index}|#{pane_current_path}|#{pane_title}",
+    ).strip()
+    for line in listing.split("\n"):
+        if not line:
+            continue
+        try:
+            pane, cwd, title = line.split("|", 2)
+        except ValueError:
+            continue
+        # Claude prefixes the title with a spinner/status glyph
+        clean = re.sub(r"^[^\w]+\s*", "", title).strip()
+        cands = by_title.get(clean)
+        if not cands:
+            continue
+        # Two panes can share a title; hand out distinct ids, newest first.
+        sid = next((s for s, _, _ in cands if s not in used), None)
+        if not sid:
+            continue
+        used.add(sid)
+        rows.append((pane, cwd, clean, sid))
+    return rows
+
+
+def cmd_list():
+    rows = detect()
+    if not rows:
+        print("no panes with a resumable Claude conversation")
+        return
+    for pane, cwd, title, sid in rows:
+        print(f"  {pane:16} {sid[:8]}  {title[:52]}")
+    print(f"\n{len(rows)} pane(s)")
+
+
+def cmd_save():
+    rows = detect()
+    os.makedirs(os.path.dirname(STATE), exist_ok=True)
+    with open(STATE, "w") as fh:
+        json.dump(
+            {"saved_at": time.time(),
+             "panes": [{"pane": p, "cwd": c, "title": t, "session": s} for p, c, t, s in rows]},
+            fh, indent=2,
+        )
+    print(f"saved {len(rows)} Claude pane(s) -> {STATE}")
+
+
+def cmd_restore():
+    try:
+        with open(STATE) as fh:
+            data = json.load(fh)
+    except (OSError, ValueError):
+        sys.exit(f"nothing saved at {STATE} — run `tmux-claude-sessions save` first")
+
+    live = set(tmux("list-panes", "-a", "-F",
+                    "#{session_name}:#{window_index}.#{pane_index}").split())
+    done = skipped = 0
+    for p in data.get("panes", []):
+        pane, sid, cwd = p["pane"], p["session"], p["cwd"]
+        if pane not in live:
+            skipped += 1
+            continue
+        # only type into an idle shell, never over a running program
+        cur = tmux("display-message", "-p", "-t", pane, "#{pane_current_command}").strip()
+        if cur not in ("zsh", "bash", "sh", "fish"):
+            skipped += 1
+            continue
+        tmux("send-keys", "-t", pane, f"cd {cwd!r} && claude -r {sid}", "Enter")
+        done += 1
+    print(f"resumed {done} pane(s), skipped {skipped}")
+
+
+if __name__ == "__main__":
+    action = sys.argv[1] if len(sys.argv) > 1 else "list"
+    {"save": cmd_save, "restore": cmd_restore, "list": cmd_list}.get(
+        action, lambda: sys.exit(__doc__)
+    )()
