@@ -28,6 +28,9 @@ apply_live() {
 apply_full() {
   local flavor="$1" c; c="$(cap "$flavor")"
   apply_live "$flavor"
+  # apply_live's OSC only reaches a real terminal. Reload Ghostty's config too,
+  # so a full apply works even when `theme` is run from a script/non-tty.
+  osascript -e 'tell application "System Events" to tell process "Ghostty" to click menu item "Reload Configuration" of menu 1 of menu bar item "Ghostty" of menu bar 1' >/dev/null 2>&1 || true
   tmux refresh-client -S 2>/dev/null || true
   command -v borders >/dev/null 2>&1 &&
     launchctl kickstart -k "gui/$(id -u)/com.felixkratz.borders" 2>/dev/null || true

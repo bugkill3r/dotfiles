@@ -65,6 +65,13 @@ style = "bold blue"
 
 [aws]
 symbol = "  "
+disabled = true   # never show the AWS region from ~/.aws/config
+
+[gcloud]
+disabled = true   # don't show the gcloud account/project (leaks work email)
+
+[azure]
+disabled = true
 
 [package]
 symbol = " "
