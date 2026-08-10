@@ -15,7 +15,7 @@ How the mapping works: Claude writes a transcript per conversation to
 Claude also sets that title as the terminal/pane title, so pane title -> aiTitle
 -> session id. Panes whose title matches no transcript are left alone.
 """
-import json, glob, os, re, subprocess, sys, time
+import json, glob, os, re, shlex, subprocess, sys, time
 
 STATE = os.path.expanduser("~/.local/share/tmux/claude-sessions.json")
 PROJECTS = os.path.expanduser("~/.claude/projects")
@@ -52,8 +52,51 @@ def transcripts():
     return out
 
 
+def pane_claude_flags(pane):
+    """Flags the `claude` in this pane is currently running with.
+
+    Captured so a restore reproduces how you actually launched it (e.g.
+    --dangerously-skip-permissions) instead of a bare `claude -r <id>`.
+    Resume arguments are stripped — restore supplies its own.
+    """
+    pid = tmux("display-message", "-p", "-t", pane, "#{pane_pid}").strip()
+    if not pid:
+        return []
+    try:
+        kids = subprocess.run(["pgrep", "-P", pid], capture_output=True,
+                              text=True).stdout.split()
+    except Exception:
+        return []
+    for kid in kids:
+        cmd = subprocess.run(["ps", "-o", "command=", "-p", kid],
+                             capture_output=True, text=True).stdout.strip()
+        if not cmd:
+            continue
+        try:
+            parts = shlex.split(cmd)
+        except ValueError:
+            continue
+        if not parts or os.path.basename(parts[0]) != "claude":
+            continue
+        flags, drop_next = [], False
+        for a in parts[1:]:
+            if drop_next:
+                drop_next = False
+                # only swallow it if it really was the session id / transcript
+                if re.fullmatch(r"[0-9a-fA-F-]{36}", a) or "/" in a:
+                    continue
+            if a in ("-r", "--resume", "--session-id", "--fork-session"):
+                drop_next = a in ("-r", "--resume", "--session-id")
+                continue
+            if a.startswith(("--resume=", "--session-id=")):
+                continue
+            flags.append(a)
+        return flags
+    return []
+
+
 def detect():
-    """[(pane, cwd, title, session_id)] for panes running a Claude conversation."""
+    """[(pane, cwd, title, session_id, flags)] for panes running a Claude conversation."""
     by_title = transcripts()
     used, rows = set(), []
     listing = tmux(
@@ -77,7 +120,7 @@ def detect():
         if not sid:
             continue
         used.add(sid)
-        rows.append((pane, cwd, clean, sid))
+        rows.append((pane, cwd, clean, sid, pane_claude_flags(pane)))
     return rows
 
 
@@ -86,8 +129,9 @@ def cmd_list():
     if not rows:
         print("no panes with a resumable Claude conversation")
         return
-    for pane, cwd, title, sid in rows:
-        print(f"  {pane:16} {sid[:8]}  {title[:52]}")
+    for pane, cwd, title, sid, flags in rows:
+        extra = ('  ' + ' '.join(flags)) if flags else ''
+        print(f"  {pane:16} {sid[:8]}  {title[:46]}{extra}")
     print(f"\n{len(rows)} pane(s)")
 
 
@@ -97,7 +141,8 @@ def cmd_save():
     with open(STATE, "w") as fh:
         json.dump(
             {"saved_at": time.time(),
-             "panes": [{"pane": p, "cwd": c, "title": t, "session": s} for p, c, t, s in rows]},
+             "panes": [{"pane": p, "cwd": c, "title": t, "session": s, "flags": f}
+                       for p, c, t, s, f in rows]},
             fh, indent=2,
         )
     print(f"saved {len(rows)} Claude pane(s) -> {STATE}")
@@ -159,7 +204,13 @@ def cmd_restore(dry=False, timeout=45):
             print(f"  skip {pane:16} busy running {cur!r}")
             skipped += 1
             continue
-        cmd = f"cd {cwd!r} && claude -r {sid}"
+        # Reproduce how the pane was actually launched. Falls back to
+        # $CLAUDE_RESTORE_FLAGS for entries saved before flags were recorded.
+        flags = p.get("flags")
+        if flags is None:
+            flags = shlex.split(os.environ.get("CLAUDE_RESTORE_FLAGS", ""))
+        flag_str = (" " + " ".join(shlex.quote(f) for f in flags)) if flags else ""
+        cmd = f"cd {cwd!r} && claude{flag_str} -r {sid}"
         if dry:
             print(f"  [dry] {pane:16} {cmd}")
         else:
