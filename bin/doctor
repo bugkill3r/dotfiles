@@ -1,0 +1,92 @@
+#!/usr/bin/env bash
+# Health check for this dotfiles setup. Surfaces the failure modes that have
+# actually bitten before: drifted config copies, files referenced but never
+# committed, broken pane geometry, services not running, theme out of sync.
+#   doctor          run all checks
+set -uo pipefail
+
+DOT="$HOME/Dev/dotfiles"
+pass=0 fail=0 warn=0
+ok()   { printf '  \033[32m✓\033[0m %s\n' "$1"; pass=$((pass+1)); }
+bad()  { printf '  \033[31m✗\033[0m %s\n' "$1"; fail=$((fail+1)); }
+note() { printf '  \033[33m!\033[0m %s\n' "$1"; warn=$((warn+1)); }
+hdr()  { printf '\n\033[1m%s\033[0m\n' "$1"; }
+
+hdr "dotfiles"
+if git -C "$DOT" diff --quiet 2>/dev/null && git -C "$DOT" diff --cached --quiet 2>/dev/null; then
+  ok "no uncommitted tracked changes"
+else
+  note "uncommitted changes: $(git -C "$DOT" status -s | grep -vc '^??') file(s)"
+fi
+ahead=$(git -C "$DOT" rev-list --count '@{u}..HEAD' 2>/dev/null || echo 0)
+[ "${ahead:-0}" -eq 0 ] && ok "pushed to origin" || note "$ahead commit(s) not pushed"
+
+# files referenced by configs but never committed -> break on a fresh clone
+hdr "referenced-but-untracked"
+refs=$(grep -rhoE '\$?\{?HOME\}?/Dev/dotfiles/bin/[a-zA-Z0-9_.-]+|~/Dev/dotfiles/bin/[a-zA-Z0-9_.-]+' \
+        "$DOT/tmux/.tmux.conf" "$DOT/.zshrc" 2>/dev/null | sed 's|.*/bin/|bin/|' | sort -u)
+miss=0
+for f in $refs; do
+  git -C "$DOT" ls-files --error-unmatch "$f" >/dev/null 2>&1 || { bad "$f referenced but untracked"; miss=1; }
+done
+[ "$miss" -eq 0 ] && ok "every referenced bin/ script is tracked"
+
+hdr "config drift (live vs repo)"
+for pair in "$HOME/.claude/statusline.py:$DOT/.claude/statusline.py" \
+            "$HOME/.config/borders/bordersrc:$DOT/.config/borders/bordersrc"; do
+  live="${pair%%:*}"; repo="${pair##*:}"
+  [ -e "$live" ] || { note "missing: $live"; continue; }
+  if [ -L "$live" ]; then ok "$(basename "$live") symlinked"
+  elif diff -q "$live" "$repo" >/dev/null 2>&1; then note "$(basename "$live") is a copy, in sync (can drift)"
+  else bad "$(basename "$live") DIVERGED from repo"; fi
+done
+
+hdr "tmux"
+if tmux list-sessions >/dev/null 2>&1; then
+  ok "server running ($(tmux list-sessions 2>/dev/null | wc -l | tr -d ' ') sessions)"
+  mism=$(tmux list-panes -a -F '#{pane_height} #{window_height}' 2>/dev/null \
+         | awk '$1 > $2' | wc -l | tr -d ' ')
+  [ "$mism" -eq 0 ] && ok "pane geometry sane" || bad "$mism pane(s) taller than their window — run tmux-fix-pane-sizes"
+  [ -n "$(tmux show -gv @resurrect-hook-post-restore-all 2>/dev/null)" ] \
+    && ok "post-restore geometry hook set" || bad "post-restore hook missing"
+  [ "$(tmux show -gv @resurrect-capture-pane-contents 2>/dev/null)" = "on" ] \
+    && ok "pane contents captured" || note "pane contents not captured (no scrollback on restore)"
+else
+  note "tmux server not running"
+fi
+
+hdr "resurrect / claude sessions"
+S="$HOME/.local/share/tmux/resurrect/last"
+if [ -e "$S" ]; then
+  age=$(( ( $(date +%s) - $(stat -f %m "$S") ) / 60 ))
+  [ "$age" -lt 120 ] && ok "last save ${age}m ago" || note "last save ${age}m ago (stale)"
+else bad "no resurrect save found"; fi
+if grep -q 'throttle guard' "$HOME/.tmux/plugins/tmux-resurrect/scripts/save.sh" 2>/dev/null; then
+  note "save.sh carries a local patch (a tpm update will wipe it)"
+else ok "resurrect plugin unpatched"; fi
+C="$HOME/.local/share/tmux/claude-sessions.json"
+[ -e "$C" ] && ok "claude session map present ($(python3 -c "import json;print(len(json.load(open('$C'))['panes']))" 2>/dev/null || echo '?') panes)" \
+             || note "no claude session map yet"
+
+hdr "services"
+pgrep -x borders >/dev/null 2>&1 && ok "borders running" || note "borders not running"
+pgrep -x sketchybar >/dev/null 2>&1 && ok "sketchybar running" || note "sketchybar not running"
+pgrep -f 'AeroSpace' >/dev/null 2>&1 && ok "aerospace running" || note "aerospace not running"
+
+hdr "theme"
+f=$(cat "$HOME/.config/catppuccin-flavor" 2>/dev/null || echo '?')
+g=$(cat "$HOME/.config/ghostty/.last-theme" 2>/dev/null || echo '?')
+if [ "Catppuccin $(tr '[:lower:]' '[:upper:]' <<< "${f:0:1}")${f:1}" = "$g" ]; then
+  ok "flavor consistent ($f)"
+else bad "flavor mismatch: flavor-file=$f ghostty=$g"; fi
+
+hdr "toolchain"
+xp=$(xcode-select -p 2>/dev/null)
+case "$xp" in
+  */CommandLineTools) ok "xcode-select -> CommandLineTools" ;;
+  *) note "xcode-select -> $xp" ;;
+esac
+[ -d /Applications/Xcode.app ] && note "Xcode.app present — blocks brew source builds" || ok "no stale Xcode.app"
+
+printf '\n\033[1m%d passed, %d warnings, %d failed\033[0m\n' "$pass" "$warn" "$fail"
+[ "$fail" -eq 0 ]

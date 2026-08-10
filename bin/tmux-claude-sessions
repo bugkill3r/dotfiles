@@ -103,15 +103,49 @@ def cmd_save():
     print(f"saved {len(rows)} Claude pane(s) -> {STATE}")
 
 
-def cmd_restore(dry=False):
+def live_panes():
+    return set(tmux("list-panes", "-a", "-F",
+                    "#{session_name}:#{window_index}.#{pane_index}").split())
+
+
+def wait_for_panes(want, timeout=45):
+    """Block until every saved pane exists.
+
+    After a reboot, tmux-continuum triggers resurrect's restore when the server
+    starts, and recreating the sessions takes a few seconds. Running restore
+    before that finishes is why panes look like they 'no longer exist'.
+    """
+    live = live_panes()
+    if want <= live:
+        return live
+    deadline = time.time() + timeout
+    print(f"waiting for tmux-resurrect to recreate panes "
+          f"({len(want & live)}/{len(want)} present) ...")
+    while time.time() < deadline:
+        time.sleep(1)
+        live = live_panes()
+        if want <= live:
+            print("all panes present")
+            return live
+    missing = len(want - live)
+    print(f"timed out after {timeout}s — {missing} pane(s) still missing; "
+          f"restoring the rest")
+    return live
+
+
+def cmd_restore(dry=False, timeout=45):
     try:
         with open(STATE) as fh:
             data = json.load(fh)
     except (OSError, ValueError):
         sys.exit(f"nothing saved at {STATE} — run `tmux-claude-sessions save` first")
 
-    live = set(tmux("list-panes", "-a", "-F",
-                    "#{session_name}:#{window_index}.#{pane_index}").split())
+    if not tmux("list-sessions").strip():
+        sys.exit("tmux server isn't running — start tmux first (continuum will "
+                 "restore your sessions), then re-run this")
+
+    want = {p["pane"] for p in data.get("panes", [])}
+    live = wait_for_panes(want, timeout)
     done = skipped = 0
     for p in data.get("panes", []):
         pane, sid, cwd = p["pane"], p["session"], p["cwd"]
@@ -139,9 +173,14 @@ def cmd_restore(dry=False):
 if __name__ == "__main__":
     args = sys.argv[1:]
     dry = "--dry-run" in args or "-n" in args
+    timeout = 45
+    for a in args:
+        if a.startswith("--timeout="):
+            try: timeout = int(a.split("=", 1)[1])
+            except ValueError: pass
     action = next((a for a in args if not a.startswith("-")), "list")
     if action == "restore":
-        cmd_restore(dry=dry)
+        cmd_restore(dry=dry, timeout=timeout)
     elif action == "save":
         cmd_save()
     elif action == "list":

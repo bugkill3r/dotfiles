@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+# Repair pane geometry after a tmux-resurrect restore.
+#
+# Restored panes can come back taller than the window that contains them (e.g.
+# a 69-row pane inside a 66-row window). The app then draws its input line into
+# rows that aren't on screen, so the pane looks alive but swallows keystrokes.
+# `resize-window -A` re-fits each window to the smallest attached client, which
+# sends SIGWINCH and makes the app re-lay-out at the true size.
+set -uo pipefail
+
+command -v tmux >/dev/null 2>&1 || exit 0
+tmux list-sessions >/dev/null 2>&1 || exit 0   # no server: nothing to do
+
+fixed=0
+while IFS=' ' read -r target pane win; do
+  [ -n "${target:-}" ] || continue
+  if [ "${pane:-0}" -gt "${win:-0}" ] 2>/dev/null; then
+    tmux resize-window -t "$target" -A 2>/dev/null && fixed=$((fixed + 1))
+  fi
+done < <(tmux list-panes -a -F '#{session_name}:#{window_index} #{pane_height} #{window_height}' 2>/dev/null | sort -u)
+
+tmux refresh-client -S 2>/dev/null || true
+[ "$fixed" -gt 0 ] && echo "tmux-fix-pane-sizes: re-fitted $fixed window(s)"
+exit 0
