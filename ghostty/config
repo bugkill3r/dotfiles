@@ -57,6 +57,10 @@ resize-overlay = never
 window-colorspace = display-p3
 
 # Appearance
+# The OSC 9;4 shimmer (fired by the Claude hook) is a thin fixed-height line —
+# `progress-style` is boolean, so it can't be thickened. `border` adds a much
+# heavier outline around the surface on bell, which the hook also rings.
+bell-features = border,attention,title,no-audio,no-system
 adjust-cell-height = 8%
 bold-color = bright
 window-padding-balance = true
@@ -139,5 +143,5 @@ config-file = ~/.config/ghostty/current-theme
 # All-dark override — loaded AFTER the theme so pure-black wins
 config-file = ~/Dev/dotfiles/ghostty/all-dark
 
-# custom-shader = /Users/saurabh/Dev/dotfiles/ghostty/shaders/cursor_blaze.glsl
+custom-shader = /Users/saurabh/Dev/dotfiles/ghostty/shaders/cursor_blaze.glsl
 custom-shader-animation = true

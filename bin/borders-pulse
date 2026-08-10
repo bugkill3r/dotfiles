@@ -1,0 +1,50 @@
+#!/usr/bin/env bash
+# Pulse the JankyBorders window border — a much heavier "done" cue than the
+# thin OSC 9;4 shimmer line, which Ghostty renders at a fixed height.
+#
+# JankyBorders updates its running instance on every invocation, so an
+# animation is just a series of colour updates followed by a restore from
+# ~/.config/borders/bordersrc.
+#
+#   borders-pulse                 pulse in the theme's green
+#   borders-pulse 5               pulse using ANSI colour 5 (magenta)
+#   borders-pulse 2 3             colour 2, three cycles
+#
+# The border is global (it follows the focused window), so this signals
+# "something finished", not "this specific window finished".
+set -uo pipefail
+
+# Claude Code hooks run with a minimal PATH that excludes /opt/homebrew/bin,
+# so resolve the binary rather than relying on `borders` being findable.
+BORDERS=$(command -v borders 2>/dev/null)
+[ -x "$BORDERS" ] || for c in /opt/homebrew/bin/borders /usr/local/bin/borders; do
+  [ -x "$c" ] && BORDERS="$c" && break
+done
+[ -x "$BORDERS" ] || exit 0
+pgrep -x borders >/dev/null 2>&1 || exit 0     # nothing to animate
+
+COLOR_IDX="${1:-2}"          # 2 = green in the ANSI palette
+CYCLES="${2:-2}"
+THEME="$HOME/.config/ghostty/current-theme"
+RC="$HOME/.config/borders/bordersrc"
+LOCK="/tmp/.borders-pulse.lock"
+
+# One pulse at a time; a second trigger while animating would fight over the
+# colour and could leave the border stuck mid-animation.
+mkdir "$LOCK" 2>/dev/null || exit 0
+restore() { [ -x "$RC" ] && "$RC" >/dev/null 2>&1; rmdir "$LOCK" 2>/dev/null; }
+trap restore EXIT INT TERM
+
+hex=$(grep -E "^[[:space:]]*palette[[:space:]]*=[[:space:]]*${COLOR_IDX}[[:space:]]*=" "$THEME" 2>/dev/null \
+      | grep -oE '[0-9a-fA-F]{6}' | tail -1)
+hex="${hex:-a6da95}"          # catppuccin green fallback
+
+# Ramp alpha up and back down — reads as a breath rather than a blink.
+FADE=(22 44 66 88 aa cc ee ff ee cc aa 88 66 44 22)
+for _ in $(seq 1 "$CYCLES"); do
+  for a in "${FADE[@]}"; do
+    "$BORDERS" active_color="glow(0x${a}${hex})" >/dev/null 2>&1
+    sleep 0.03
+  done
+done
+# trap restores the configured border
