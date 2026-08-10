@@ -1,9 +1,14 @@
 #!/usr/bin/env bash
 # ─────────────────────────────────────────────────────────────────────────────
 # Interactive dotfiles installer.
-#   ./install.sh          pick components + style interactively
-#   ./install.sh --all    install everything, non-interactively
+#   ./install.sh              pick components + style interactively
+#   ./install.sh --all        install everything, non-interactively
+#   ./install.sh --shaders    also enable a Ghostty GLSL shader (opt-in)
+#   ./install.sh --shader X   enable a specific shader (see: shader --list)
 #   ./install.sh --help
+#
+# Terminal shaders are never enabled by default — not even with --all. They
+# redraw the terminal continuously and cost GPU/battery, so they are opt-in.
 #
 # Safe to re-run (idempotent). Existing real files are backed up to *.bak.
 # Works on a fresh macOS (bash 3.2 — no associative arrays used).
@@ -172,10 +177,23 @@ i_fonts() {
 i_theming() {
   step "Bar/theme scripts → ~/.local/bin"
   [ "$DRY" = 1 ] || mkdir -p "$HOME/.local/bin"
-  for s in theme barstyle barblur baropacity gtheme tmux-window-gradient.py tmux-claude-sessions; do
+  for s in theme barstyle barblur baropacity gtheme tmux-window-gradient.py \
+           tmux-claude-sessions tmux-fix-pane-sizes doctor shader; do
     link "$DOT/bin/$s" "$HOME/.local/bin/$s"
   done
   link "$DOT/.claude/statusline.py" "$HOME/.claude/statusline.py"
+}
+
+# Opt-in only (--shaders / --shader NAME). Never runs by default or with --all.
+i_shaders() {
+  step "Terminal shader → $SHADER_NAME"
+  if [ ! -f "$DOT/ghostty/shaders/$SHADER_NAME.glsl" ]; then
+    warn "no such shader: $SHADER_NAME (see: shader --list)"; return 0
+  fi
+  if [ "$DRY" = 1 ]; then run "shader $SHADER_NAME"; return 0; fi
+  if [ -x "$DOT/bin/shader" ]; then
+    "$DOT/bin/shader" "$SHADER_NAME" >/dev/null 2>&1 && ok "enabled $SHADER_NAME"
+  fi
 }
 i_macos() { step "macOS defaults"; run bash "$DOT/macos.sh"; }
 i_apps()  { step "GUI apps"; brew_c raycast orbstack tailscale-app swish; }
@@ -194,10 +212,17 @@ apply_style() {
 
 # ── main ─────────────────────────────────────────────────────────────────────
 ALL=0
+SHADERS=0
+SHADER_NAME="cursor_tail"
+_want_shader_name=0
 for a in "$@"; do
+  if [ "$_want_shader_name" = 1 ]; then SHADER_NAME="$a"; _want_shader_name=0; continue; fi
   case "$a" in
-    -h|--help)    sed -n '3,10p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
+    -h|--help)    sed -n '3,15p' "$0" | sed 's/^# \{0,1\}//'; exit 0 ;;
     --all)        ALL=1 ;;
+    --shaders)    SHADERS=1 ;;
+    --shader)     SHADERS=1; _want_shader_name=1 ;;
+    --shader=*)   SHADERS=1; SHADER_NAME="${a#--shader=}" ;;
     -n|--dry-run) DRY=1 ;;
     *) say "unknown option: $a  (try --help)"; exit 1 ;;
   esac
@@ -241,6 +266,7 @@ is_sel theming  && i_theming
 is_sel macos    && i_macos
 is_sel apps     && i_apps
 apply_style
+[ "$SHADERS" = 1 ] && i_shaders
 
 cat <<EOF
 

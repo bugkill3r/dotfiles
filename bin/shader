@@ -1,0 +1,58 @@
+#!/usr/bin/env bash
+# Flip Ghostty's custom shader and reload, so effects can be compared quickly.
+#   shader              list available shaders, marking the active one
+#   shader <name>       activate that shader
+#   shader off          disable shaders
+set -uo pipefail
+
+CONF="$HOME/Dev/dotfiles/ghostty/config"
+DIR="$HOME/Dev/dotfiles/ghostty/shaders"
+LINE_RE='^[[:space:]]*#?[[:space:]]*custom-shader[[:space:]]*='
+
+reload() {
+  osascript -e 'tell application "System Events" to tell process "Ghostty" to click menu item "Reload Configuration" of menu 1 of menu bar item "Ghostty" of menu bar 1' >/dev/null 2>&1
+}
+
+active() {
+  grep -E "$LINE_RE" "$CONF" | grep -v '^[[:space:]]*#' | head -1 \
+    | sed -E 's|.*/([^/]+)\.glsl.*|\1|'
+}
+
+names() { for f in "$DIR"/*.glsl; do basename "$f" .glsl; done | sort; }
+
+case "${1:-}" in
+  next|prev)
+    cur="$(active)"
+    mapfile -t all < <(names) 2>/dev/null || { all=(); while IFS= read -r l; do all+=("$l"); done < <(names); }
+    n=${#all[@]}; idx=-1
+    for i in "${!all[@]}"; do [ "${all[$i]}" = "$cur" ] && idx=$i && break; done
+    if [ "$1" = "next" ]; then nxt=$(( (idx + 1) % n )); else nxt=$(( (idx - 1 + n) % n )); fi
+    set -- "${all[$nxt]}" ;;
+esac
+
+case "${1:-}" in
+  ""|--list|-l)
+    cur="$(active)"
+    printf 'shaders (active: %s)\n\n' "${cur:-off}"
+    for f in "$DIR"/*.glsl; do
+      n="$(basename "$f" .glsl)"
+      [ "$n" = "$cur" ] && printf '  \033[32m● %s\033[0m\n' "$n" || printf '    %s\n' "$n"
+    done
+    printf '\nusage: shader <name> | shader off\n'
+    exit 0 ;;
+  off)
+    # comment out every custom-shader line
+    perl -0pi -e 's{^([[:space:]]*)(custom-shader[[:space:]]*=)}{$1# $2}mg' "$CONF"
+    reload; echo "shaders off"; exit 0 ;;
+esac
+
+name="${1%.glsl}"
+[ -f "$DIR/$name.glsl" ] || { echo "no such shader: $name (try: shader --list)"; exit 1; }
+
+# drop all existing custom-shader lines, then append a fresh pair
+perl -0pi -e 's{^[[:space:]]*#?[[:space:]]*custom-shader.*\n}{}mg' "$CONF"
+printf '\ncustom-shader = %s/%s.glsl\ncustom-shader-animation = true\n' \
+  "$HOME/Dev/dotfiles/ghostty/shaders" "$name" >> "$CONF"
+
+reload
+echo "shader → $name   (shader off  to disable)"

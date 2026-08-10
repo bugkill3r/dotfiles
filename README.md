@@ -20,6 +20,10 @@ cd ~/Dev/dotfiles
 ./install.sh --all      # everything, non-interactively
 ./install.sh --dry-run  # preview every action, change nothing (pairs with --all)
 ./install.sh --help
+
+# terminal shaders are opt-in — never enabled by default, not even with --all
+./install.sh --shaders                  # enable the default (cursor_tail)
+./install.sh --shader ripple_cursor     # enable a specific one
 ```
 
 The installer is idempotent (re-run it any time to add components), backs up any
@@ -71,6 +75,48 @@ barblur clear         # clear transparency (no blur)
 
 baropacity 60         # bar tint opacity, 0–100
 ```
+
+## Terminal shaders (opt-in)
+
+47 GLSL shaders live in `ghostty/shaders/`. **Nothing is enabled by default** —
+they redraw the terminal and cost GPU/battery, so you turn one on deliberately.
+
+```sh
+shader                # list them all, marking the active one
+shader cursor_tail    # enable one (reloads Ghostty automatically)
+shader next / prev    # cycle, to compare quickly
+shader off            # disable
+```
+
+When each one costs you:
+
+| Uses | Redraws | Examples |
+|------|---------|----------|
+| `iCurrentCursor` + `iTimeCursorChange` | only for ~0.2s after the cursor moves — idle otherwise | every `cursor_*` |
+| `iChannel0` only | when screen content changes | `bloom`, `bettercrt` |
+| `iTime` | continuously while the window is focused — the real battery cost | `galaxy`, `water`, `fireworks` |
+
+Ghostty's own `custom-shader-animation` is `true`, so an **unfocused window never
+animates**. Set it to `always` to animate unfocused too (much more expensive).
+
+## Maintenance
+
+```sh
+doctor                       # health check: config drift, untracked-but-referenced
+                             # files, pane geometry, services, theme, toolchain
+
+tmux-claude-sessions save    # map each tmux pane -> the Claude conversation in it
+tmux-claude-sessions restore # resume them in place after a reboot (waits for
+                             # tmux-resurrect to recreate the panes first)
+tmux-fix-pane-sizes          # re-fit panes taller than their window (runs
+                             # automatically after every resurrect restore)
+
+tests/smoke-tmux-restore.sh  # end-to-end save/restore test on an isolated
+                             # tmux server — never touches real sessions
+```
+
+After a reboot: start tmux (continuum restores the layout automatically), then
+`tmux-claude-sessions restore` to bring the conversations back.
 
 ## AeroSpace keys (`alt` = modifier)
 

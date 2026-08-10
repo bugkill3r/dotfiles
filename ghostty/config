@@ -62,9 +62,9 @@ bold-color = bright
 window-padding-balance = true
 macos-icon = glass
 
-# Cursor smear trail (GLSL). Comment out to disable.
-# custom-shader = ~/Dev/dotfiles/ghostty/shaders/cursor_smear.glsl  # disabled (too intrusive)
-# custom-shader-animation = true
+# GLSL shaders live in ghostty/shaders/. Switch with `shader <name>`,
+# list them with `shader`, turn them off with `shader off`.
+# The active custom-shader line is managed at the bottom of this file.
 
 # Cursor
 cursor-style = block
@@ -125,6 +125,12 @@ command-palette-entry = title:"Tmux: Session Picker",description:"Switch or crea
 command-palette-entry = title:"Files: Yazi",description:"Open the yazi file manager",action:"text:yazi\n"
 command-palette-entry = title:"Git: Lazygit",description:"Open lazygit in the current repo",action:"text:lazygit\n"
 command-palette-entry = title:"System: btop",description:"Resource monitor",action:"text:btop\n"
+command-palette-entry = title:"Shader: List…",description:"Show shaders and the active one",action:"text:shader\n"
+command-palette-entry = title:"Shader: Off",description:"Disable terminal shaders",action:"text:shader off\n"
+command-palette-entry = title:"Shader: Cursor Tail",description:"Subtle cursor trail",action:"text:shader cursor_tail\n"
+command-palette-entry = title:"Shader: Cursor Blaze",description:"Flame-like cursor trail",action:"text:shader cursor_blaze\n"
+command-palette-entry = title:"Shader: Ripple",description:"Ripple pulse from the cursor",action:"text:shader ripple_cursor\n"
+command-palette-entry = title:"Shader: Bloom",description:"Soft ambient glow",action:"text:shader bloom\n"
 command-palette-entry = title:"Dotfiles",description:"cd to the dotfiles repo",action:"text:cd ~/Dev/dotfiles\n"
 
 # Theme override (managed by gtheme script)
@@ -132,3 +138,6 @@ config-file = ~/.config/ghostty/current-theme
 
 # All-dark override — loaded AFTER the theme so pure-black wins
 config-file = ~/Dev/dotfiles/ghostty/all-dark
+
+# custom-shader = /Users/saurabh/Dev/dotfiles/ghostty/shaders/cursor_blaze.glsl
+custom-shader-animation = true
