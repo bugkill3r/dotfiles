@@ -12,12 +12,32 @@ command -v tmux >/dev/null 2>&1 || exit 0
 tmux list-sessions >/dev/null 2>&1 || exit 0   # no server: nothing to do
 
 fixed=0
+
+# (a) pane taller than the window containing it — the app's input line ends up
+#     off screen and the pane looks unresponsive.
 while IFS=' ' read -r target pane win; do
   [ -n "${target:-}" ] || continue
   if [ "${pane:-0}" -gt "${win:-0}" ] 2>/dev/null; then
     tmux resize-window -t "$target" -A 2>/dev/null && fixed=$((fixed + 1))
   fi
 done < <(tmux list-panes -a -F '#{session_name}:#{window_index} #{pane_height} #{window_height}' 2>/dev/null | sort -u)
+
+# (b) window smaller than the terminal — with `window-size latest`, windows you
+#     haven't visited since the terminal was resized keep the old dimensions and
+#     tmux pads the unused area with '·'. Only sessions with an attached client
+#     can be measured, so skip the rest.
+for s in $(tmux list-sessions -F '#{session_name}' 2>/dev/null); do
+  tmux list-clients -t "$s" 2>/dev/null | grep -q . || continue
+  cw=$(tmux list-clients -t "$s" -F '#{client_width}' 2>/dev/null | sort -n | head -1)
+  ch=$(tmux list-clients -t "$s" -F '#{client_height}' 2>/dev/null | sort -n | head -1)
+  [ -n "${cw:-}" ] && [ -n "${ch:-}" ] || continue
+  while IFS=' ' read -r target ww wh; do
+    [ -n "${target:-}" ] || continue
+    if [ "${ww:-0}" -lt "$cw" ] || [ "${wh:-0}" -lt $((ch - 1)) ] 2>/dev/null; then
+      tmux resize-window -t "$target" -A 2>/dev/null && fixed=$((fixed + 1))
+    fi
+  done < <(tmux list-windows -t "$s" -F '#{session_name}:#{window_index} #{window_width} #{window_height}' 2>/dev/null)
+done
 
 tmux refresh-client -S 2>/dev/null || true
 [ "$fixed" -gt 0 ] && echo "tmux-fix-pane-sizes: re-fitted $fixed window(s)"
